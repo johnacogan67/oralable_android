@@ -1,0 +1,1320 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		265393712F04BD5600856E5E /* OralableCore in Frameworks */ = {isa = PBXBuildFile; productRef = 260RALC022EFF000000000002 /* OralableCore */; };
+		265393722F04BD5600856E5E /* OralableCore in Frameworks */ = {isa = PBXBuildFile; productRef = 260RALC032EFF000000000003 /* OralableCore */; };
+		2671AFEA2EE7BDE700A5D229 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 2671AFE92EE7BDE700A5D229 /* AsyncAlgorithms */; };
+		26785D372ED6C96A004BA1A3 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26785D362ED6C96A004BA1A3 /* Algorithms */; };
+		26917C362EED552800B25687 /* DemoDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26917C352EED552800B25687 /* DemoDataManager.swift */; };
+		26917C382EED554000B25687 /* DemoParticipantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26917C372EED554000B25687 /* DemoParticipantDetailView.swift */; };
+		26917C402EED577900B25687 /* demo_participant_all_sessions.csv in Resources */ = {isa = PBXBuildFile; fileRef = 26917C3C2EED577900B25687 /* demo_participant_all_sessions.csv */; };
+		26917C412EED577900B25687 /* demo_participant_session_2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 26917C3D2EED577900B25687 /* demo_participant_session_2.csv */; };
+		26917C422EED577900B25687 /* demo_participant_session_1.csv in Resources */ = {isa = PBXBuildFile; fileRef = 26917C3E2EED577900B25687 /* demo_participant_session_1.csv */; };
+		26917C432EED577900B25687 /* demo_participant_session_3.csv in Resources */ = {isa = PBXBuildFile; fileRef = 26917C3F2EED577900B25687 /* demo_participant_session_3.csv */; };
+		26992C5F2ED6C28A00D9993D /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26992C5E2ED6C28A00D9993D /* AsyncAlgorithms */; };
+		26A0F47C2EBAE8C00054C5FC /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26A0F47B2EBAE8C00054C5FC /* AsyncAlgorithms */; };
+		26A0F47E2EBAE8D80054C5FC /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26A0F47D2EBAE8D80054C5FC /* AsyncAlgorithms */; };
+		26A0F4802EBAE8EE0054C5FC /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26A0F47F2EBAE8EE0054C5FC /* AsyncAlgorithms */; };
+		26FE17B92EE6D6AF00026648 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 26FE17932EE6D0D200026648 /* PrivacyInfo.xcprivacy */; };
+		26FE17BD2EE6D77F00026648 /* AsyncBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 26FE17BC2EE6D77F00026648 /* AsyncBluetooth */; };
+		26FE17BE2EE6D93400026648 /* OralableForProfessionals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17922EE6D0D200026648 /* OralableForProfessionals.swift */; };
+		26FE17BF2EE6D96A00026648 /* ProfessionalConfiguration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 26FE178E2EE6D0D200026648 /* ProfessionalConfiguration.storekit */; };
+		26FE17C02EE6D97500026648 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26FE178D2EE6D0D200026648 /* Assets.xcassets */; };
+		26FE17C12EE6D99300026648 /* ProfessionalDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17742EE6D0D200026648 /* ProfessionalDataManager.swift */; };
+		26FE17C22EE6D99300026648 /* ProfessionalAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17732EE6D0D200026648 /* ProfessionalAuthenticationManager.swift */; };
+		26FE17C42EE6D99300026648 /* ProfessionalSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17752EE6D0D200026648 /* ProfessionalSubscriptionManager.swift */; };
+		26FE17C52EE6D99300026648 /* BaseAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17712EE6D0D200026648 /* BaseAuthenticationManager.swift */; };
+		26FE17C62EE6D99300026648 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17762EE6D0D200026648 /* DesignSystem.swift */; };
+		26FE17C72EE6D99300026648 /* ProfessionaltAppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17722EE6D0D200026648 /* ProfessionaltAppDependencies.swift */; };
+		26FE17C82EE6D99300026648 /* FeatureFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17772EE6D0D200026648 /* FeatureFlags.swift */; };
+		26FE17C92EE6D9B300026648 /* PatientHistoricalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17892EE6D0D200026648 /* PatientHistoricalView.swift */; };
+		26FE17CA2EE6D9B300026648 /* ProfessionalsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17842EE6D0D200026648 /* ProfessionalsSettingsView.swift */; };
+		26FE17CB2EE6D9B300026648 /* PatientDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17862EE6D0D200026648 /* PatientDashboardView.swift */; };
+		26FE17CC2EE6D9B300026648 /* AddPatientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17832EE6D0D200026648 /* AddPatientView.swift */; };
+		26FE17CD2EE6D9B300026648 /* PatientListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE178A2EE6D0D200026648 /* PatientListView.swift */; };
+		26FE17CE2EE6D9B300026648 /* DeveloperSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17852EE6D0D200026648 /* DeveloperSettingsView.swift */; };
+		26FE17CF2EE6D9B300026648 /* PatientDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17872EE6D0D200026648 /* PatientDetailView.swift */; };
+		26FE17D02EE6D9B300026648 /* UpgradePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE178B2EE6D0D200026648 /* UpgradePromptView.swift */; };
+		26FE17D22EE6D9CC00026648 /* PatientListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17812EE6D0D200026648 /* PatientListViewModel.swift */; };
+		26FE17D32EE6D9CC00026648 /* PatientDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE177F2EE6D0D200026648 /* PatientDashboardViewModel.swift */; };
+		26FE17D42EE6D9CC00026648 /* ProfessionalSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE177E2EE6D0D200026648 /* ProfessionalSettingsViewModel.swift */; };
+		26FE17D52EE6D9CC00026648 /* AddPatientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE177D2EE6D0D200026648 /* AddPatientViewModel.swift */; };
+		26FE17D62EE6D9CC00026648 /* PatientHistoricalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17802EE6D0D200026648 /* PatientHistoricalViewModel.swift */; };
+		26FE17D72EE6D9D900026648 /* SharedSensorModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE177B2EE6D0D200026648 /* SharedSensorModels.swift */; };
+		26FE17D82EE6D9D900026648 /* ProfessionalHistoricalDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE177A2EE6D0D200026648 /* ProfessionalHistoricalDataModels.swift */; };
+		26FE17D92EE6DA0400026648 /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE176F2EE6D0D200026648 /* SharedComponents.swift */; };
+		26FE17DC2EE6DC9000026648 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 26FE17DB2EE6DC9000026648 /* AsyncAlgorithms */; };
+		26FE17DD2EE6DCE900026648 /* OralableForProfessionalsUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17B42EE6D0FE00026648 /* OralableForProfessionalsUITestsLaunchTests.swift */; };
+		26FE17DE2EE6DCF200026648 /* OralableForProfessionalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17B32EE6D0FE00026648 /* OralableForProfessionalsUITests.swift */; };
+		26FE17E02EE8A00000026648 /* CSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FE17DF2EE8A00000026648 /* CSVParser.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		26CAF2702E781EFE003FE378 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26CAF2562E781EFB003FE378 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26CAF25D2E781EFB003FE378;
+			remoteInfo = OralableApp;
+		};
+		26CAF27A2E781EFE003FE378 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26CAF2562E781EFB003FE378 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26CAF25D2E781EFB003FE378;
+			remoteInfo = OralableApp;
+		};
+		26D6C3FD2ECD181B00C60C3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26CAF2562E781EFB003FE378 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26D6C3EB2ECD181900C60C3D;
+			remoteInfo = OralableForDentists;
+		};
+		26D6C4072ECD181B00C60C3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26CAF2562E781EFB003FE378 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26D6C3EB2ECD181900C60C3D;
+			remoteInfo = OralableForDentists;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		26917C352EED552800B25687 /* DemoDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDataManager.swift; sourceTree = "<group>"; };
+		26917C372EED554000B25687 /* DemoParticipantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoParticipantDetailView.swift; sourceTree = "<group>"; };
+		26917C3C2EED577900B25687 /* demo_participant_all_sessions.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = demo_participant_all_sessions.csv; path = OralableForProfessionals/Resources/DemoData/demo_participant_all_sessions.csv; sourceTree = "<group>"; };
+		26917C3D2EED577900B25687 /* demo_participant_session_2.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = demo_participant_session_2.csv; path = OralableForProfessionals/Resources/DemoData/demo_participant_session_2.csv; sourceTree = "<group>"; };
+		26917C3E2EED577900B25687 /* demo_participant_session_1.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = demo_participant_session_1.csv; path = OralableForProfessionals/Resources/DemoData/demo_participant_session_1.csv; sourceTree = "<group>"; };
+		26917C3F2EED577900B25687 /* demo_participant_session_3.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = demo_participant_session_3.csv; path = OralableForProfessionals/Resources/DemoData/demo_participant_session_3.csv; sourceTree = "<group>"; };
+		26CAF25E2E781EFB003FE378 /* OralableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OralableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26CAF26F2E781EFE003FE378 /* OralableAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OralableAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26CAF2792E781EFE003FE378 /* OralableAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OralableAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D6C3EC2ECD181900C60C3D /* OralableForProfessionals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OralableForProfessionals.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D6C3FC2ECD181B00C60C3D /* OralableForProfessionalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OralableForProfessionalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D6C4062ECD181B00C60C3D /* OralableForProfessionalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OralableForProfessionalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26FE176F2EE6D0D200026648 /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
+		26FE17712EE6D0D200026648 /* BaseAuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAuthenticationManager.swift; sourceTree = "<group>"; };
+		26FE17722EE6D0D200026648 /* ProfessionaltAppDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionaltAppDependencies.swift; sourceTree = "<group>"; };
+		26FE17732EE6D0D200026648 /* ProfessionalAuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalAuthenticationManager.swift; sourceTree = "<group>"; };
+		26FE17742EE6D0D200026648 /* ProfessionalDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalDataManager.swift; sourceTree = "<group>"; };
+		26FE17752EE6D0D200026648 /* ProfessionalSubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalSubscriptionManager.swift; sourceTree = "<group>"; };
+		26FE17762EE6D0D200026648 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		26FE17772EE6D0D200026648 /* FeatureFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlags.swift; sourceTree = "<group>"; };
+		26FE177A2EE6D0D200026648 /* ProfessionalHistoricalDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalHistoricalDataModels.swift; sourceTree = "<group>"; };
+		26FE177B2EE6D0D200026648 /* SharedSensorModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSensorModels.swift; sourceTree = "<group>"; };
+		26FE177D2EE6D0D200026648 /* AddPatientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPatientViewModel.swift; sourceTree = "<group>"; };
+		26FE177E2EE6D0D200026648 /* ProfessionalSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalSettingsViewModel.swift; sourceTree = "<group>"; };
+		26FE177F2EE6D0D200026648 /* PatientDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDashboardViewModel.swift; sourceTree = "<group>"; };
+		26FE17802EE6D0D200026648 /* PatientHistoricalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoricalViewModel.swift; sourceTree = "<group>"; };
+		26FE17812EE6D0D200026648 /* PatientListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListViewModel.swift; sourceTree = "<group>"; };
+		26FE17832EE6D0D200026648 /* AddPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPatientView.swift; sourceTree = "<group>"; };
+		26FE17842EE6D0D200026648 /* ProfessionalsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessionalsSettingsView.swift; sourceTree = "<group>"; };
+		26FE17852EE6D0D200026648 /* DeveloperSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperSettingsView.swift; sourceTree = "<group>"; };
+		26FE17862EE6D0D200026648 /* PatientDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDashboardView.swift; sourceTree = "<group>"; };
+		26FE17872EE6D0D200026648 /* PatientDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientDetailView.swift; sourceTree = "<group>"; };
+		26FE17892EE6D0D200026648 /* PatientHistoricalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoricalView.swift; sourceTree = "<group>"; };
+		26FE178A2EE6D0D200026648 /* PatientListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListView.swift; sourceTree = "<group>"; };
+		26FE178B2EE6D0D200026648 /* UpgradePromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradePromptView.swift; sourceTree = "<group>"; };
+		26FE178D2EE6D0D200026648 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		26FE178E2EE6D0D200026648 /* ProfessionalConfiguration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProfessionalConfiguration.storekit; sourceTree = "<group>"; };
+		26FE178F2EE6D0D200026648 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		26FE17902EE6D0D200026648 /* Oralable.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Oralable.entitlements; sourceTree = "<group>"; };
+		26FE17912EE6D0D200026648 /* OralableForProfessionals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OralableForProfessionals.entitlements; sourceTree = "<group>"; };
+		26FE17922EE6D0D200026648 /* OralableForProfessionals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OralableForProfessionals.swift; sourceTree = "<group>"; };
+		26FE17932EE6D0D200026648 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		26FE17B32EE6D0FE00026648 /* OralableForProfessionalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OralableForProfessionalsUITests.swift; sourceTree = "<group>"; };
+		26FE17B42EE6D0FE00026648 /* OralableForProfessionalsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OralableForProfessionalsUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		26FE17DF2EE8A00000026648 /* CSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVParser.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		26FE17DA2EE6DC4200026648 /* Exceptions for "OralableApp" folder in "OralableApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 26CAF25D2E781EFB003FE378 /* OralableApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		26917C392EED555E00B25687 /* New Folder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
+		26917C3A2EED556D00B25687 /* New Folder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
+		26917C3B2EED557D00B25687 /* New Folder 2 */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "New Folder 2";
+			sourceTree = "<group>";
+		};
+		26B2FED92EB999C100E0F7B1 /* OralableApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				26FE17DA2EE6DC4200026648 /* Exceptions for "OralableApp" folder in "OralableApp" target */,
+			);
+			path = OralableApp;
+			sourceTree = "<group>";
+		};
+		26CAF2722E781EFE003FE378 /* OralableAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = OralableAppTests;
+			sourceTree = "<group>";
+		};
+		26CAF27C2E781EFE003FE378 /* OralableAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = OralableAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		26CAF25B2E781EFB003FE378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				265393712F04BD5600856E5E /* OralableCore in Frameworks */,
+				26785D372ED6C96A004BA1A3 /* Algorithms in Frameworks */,
+				26FE17BD2EE6D77F00026648 /* AsyncBluetooth in Frameworks */,
+				26A0F47C2EBAE8C00054C5FC /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF26C2E781EFE003FE378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26A0F47E2EBAE8D80054C5FC /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF2762E781EFE003FE378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26A0F4802EBAE8EE0054C5FC /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3E92ECD181900C60C3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				265393722F04BD5600856E5E /* OralableCore in Frameworks */,
+				26992C5F2ED6C28A00D9993D /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3F92ECD181B00C60C3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26FE17DC2EE6DC9000026648 /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C4032ECD181B00C60C3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2671AFEA2EE7BDE700A5D229 /* AsyncAlgorithms in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		26CAF2552E781EFB003FE378 = {
+			isa = PBXGroup;
+			children = (
+				26917C3C2EED577900B25687 /* demo_participant_all_sessions.csv */,
+				26917C3E2EED577900B25687 /* demo_participant_session_1.csv */,
+				26917C3D2EED577900B25687 /* demo_participant_session_2.csv */,
+				26917C3F2EED577900B25687 /* demo_participant_session_3.csv */,
+				26FE17B52EE6D0FE00026648 /* OralableForProfessionalsUITests */,
+				26FE17942EE6D0D200026648 /* OralableForProfessionals */,
+				26FE16E52EE6CE7300026648 /* OralableForProfessionalsTests */,
+				26B2FED92EB999C100E0F7B1 /* OralableApp */,
+				26CAF2722E781EFE003FE378 /* OralableAppTests */,
+				26CAF27C2E781EFE003FE378 /* OralableAppUITests */,
+				26CAF25F2E781EFB003FE378 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		26CAF25F2E781EFB003FE378 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				26CAF25E2E781EFB003FE378 /* OralableApp.app */,
+				26CAF26F2E781EFE003FE378 /* OralableAppTests.xctest */,
+				26CAF2792E781EFE003FE378 /* OralableAppUITests.xctest */,
+				26D6C3EC2ECD181900C60C3D /* OralableForProfessionals.app */,
+				26D6C3FC2ECD181B00C60C3D /* OralableForProfessionalsTests.xctest */,
+				26D6C4062ECD181B00C60C3D /* OralableForProfessionalsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		26FE16E52EE6CE7300026648 /* OralableForProfessionalsTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = OralableForProfessionalsTests;
+			sourceTree = "<group>";
+		};
+		26FE17702EE6D0D200026648 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				26FE176F2EE6D0D200026648 /* SharedComponents.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		26FE17792EE6D0D200026648 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				26917C3A2EED556D00B25687 /* New Folder */,
+				26917C352EED552800B25687 /* DemoDataManager.swift */,
+				26FE17712EE6D0D200026648 /* BaseAuthenticationManager.swift */,
+				26FE17722EE6D0D200026648 /* ProfessionaltAppDependencies.swift */,
+				26FE17732EE6D0D200026648 /* ProfessionalAuthenticationManager.swift */,
+				26FE17742EE6D0D200026648 /* ProfessionalDataManager.swift */,
+				26FE17752EE6D0D200026648 /* ProfessionalSubscriptionManager.swift */,
+				26FE17762EE6D0D200026648 /* DesignSystem.swift */,
+				26FE17772EE6D0D200026648 /* FeatureFlags.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		26FE177C2EE6D0D200026648 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				26FE17DF2EE8A00000026648 /* CSVParser.swift */,
+				26FE177A2EE6D0D200026648 /* ProfessionalHistoricalDataModels.swift */,
+				26FE177B2EE6D0D200026648 /* SharedSensorModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		26FE17822EE6D0D200026648 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				26FE177D2EE6D0D200026648 /* AddPatientViewModel.swift */,
+				26FE177E2EE6D0D200026648 /* ProfessionalSettingsViewModel.swift */,
+				26FE177F2EE6D0D200026648 /* PatientDashboardViewModel.swift */,
+				26FE17802EE6D0D200026648 /* PatientHistoricalViewModel.swift */,
+				26FE17812EE6D0D200026648 /* PatientListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		26FE178C2EE6D0D200026648 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				26917C372EED554000B25687 /* DemoParticipantDetailView.swift */,
+				26FE17832EE6D0D200026648 /* AddPatientView.swift */,
+				26FE17842EE6D0D200026648 /* ProfessionalsSettingsView.swift */,
+				26FE17852EE6D0D200026648 /* DeveloperSettingsView.swift */,
+				26FE17862EE6D0D200026648 /* PatientDashboardView.swift */,
+				26FE17872EE6D0D200026648 /* PatientDetailView.swift */,
+				26FE17892EE6D0D200026648 /* PatientHistoricalView.swift */,
+				26FE178A2EE6D0D200026648 /* PatientListView.swift */,
+				26FE178B2EE6D0D200026648 /* UpgradePromptView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		26FE17942EE6D0D200026648 /* OralableForProfessionals */ = {
+			isa = PBXGroup;
+			children = (
+				26917C3B2EED557D00B25687 /* New Folder 2 */,
+				26917C392EED555E00B25687 /* New Folder */,
+				26FE17702EE6D0D200026648 /* Components */,
+				26FE17792EE6D0D200026648 /* Managers */,
+				26FE177C2EE6D0D200026648 /* Models */,
+				26FE17822EE6D0D200026648 /* ViewModels */,
+				26FE178C2EE6D0D200026648 /* Views */,
+				26FE178D2EE6D0D200026648 /* Assets.xcassets */,
+				26FE178E2EE6D0D200026648 /* ProfessionalConfiguration.storekit */,
+				26FE178F2EE6D0D200026648 /* Info.plist */,
+				26FE17902EE6D0D200026648 /* Oralable.entitlements */,
+				26FE17912EE6D0D200026648 /* OralableForProfessionals.entitlements */,
+				26FE17922EE6D0D200026648 /* OralableForProfessionals.swift */,
+				26FE17932EE6D0D200026648 /* PrivacyInfo.xcprivacy */,
+			);
+			path = OralableForProfessionals;
+			sourceTree = "<group>";
+		};
+		26FE17B52EE6D0FE00026648 /* OralableForProfessionalsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				26FE17B32EE6D0FE00026648 /* OralableForProfessionalsUITests.swift */,
+				26FE17B42EE6D0FE00026648 /* OralableForProfessionalsUITestsLaunchTests.swift */,
+			);
+			path = OralableForProfessionalsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		26CAF25D2E781EFB003FE378 /* OralableApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26CAF2822E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableApp" */;
+			buildPhases = (
+				26CAF25A2E781EFB003FE378 /* Sources */,
+				26CAF25B2E781EFB003FE378 /* Frameworks */,
+				26CAF25C2E781EFB003FE378 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				26B2FED92EB999C100E0F7B1 /* OralableApp */,
+			);
+			name = OralableApp;
+			packageProductDependencies = (
+				26A0F47B2EBAE8C00054C5FC /* AsyncAlgorithms */,
+				26785D362ED6C96A004BA1A3 /* Algorithms */,
+				26FE17BC2EE6D77F00026648 /* AsyncBluetooth */,
+				260RALC022EFF000000000002 /* OralableCore */,
+			);
+			productName = OralableApp;
+			productReference = 26CAF25E2E781EFB003FE378 /* OralableApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		26CAF26E2E781EFE003FE378 /* OralableAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26CAF2872E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableAppTests" */;
+			buildPhases = (
+				26CAF26B2E781EFE003FE378 /* Sources */,
+				26CAF26C2E781EFE003FE378 /* Frameworks */,
+				26CAF26D2E781EFE003FE378 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26CAF2712E781EFE003FE378 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				26CAF2722E781EFE003FE378 /* OralableAppTests */,
+			);
+			name = OralableAppTests;
+			packageProductDependencies = (
+				26A0F47D2EBAE8D80054C5FC /* AsyncAlgorithms */,
+			);
+			productName = OralableAppTests;
+			productReference = 26CAF26F2E781EFE003FE378 /* OralableAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		26CAF2782E781EFE003FE378 /* OralableAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26CAF28A2E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableAppUITests" */;
+			buildPhases = (
+				26CAF2752E781EFE003FE378 /* Sources */,
+				26CAF2762E781EFE003FE378 /* Frameworks */,
+				26CAF2772E781EFE003FE378 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26CAF27B2E781EFE003FE378 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				26CAF27C2E781EFE003FE378 /* OralableAppUITests */,
+			);
+			name = OralableAppUITests;
+			packageProductDependencies = (
+				26A0F47F2EBAE8EE0054C5FC /* AsyncAlgorithms */,
+			);
+			productName = OralableAppUITests;
+			productReference = 26CAF2792E781EFE003FE378 /* OralableAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		26D6C3EB2ECD181900C60C3D /* OralableForProfessionals */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26D6C40F2ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionals" */;
+			buildPhases = (
+				26D6C3E82ECD181900C60C3D /* Sources */,
+				26D6C3E92ECD181900C60C3D /* Frameworks */,
+				26D6C3EA2ECD181900C60C3D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				26917C392EED555E00B25687 /* New Folder */,
+				26917C3A2EED556D00B25687 /* New Folder */,
+				26917C3B2EED557D00B25687 /* New Folder 2 */,
+			);
+			name = OralableForProfessionals;
+			packageProductDependencies = (
+				26992C5E2ED6C28A00D9993D /* AsyncAlgorithms */,
+				260RALC032EFF000000000003 /* OralableCore */,
+			);
+			productName = OralableForDentists;
+			productReference = 26D6C3EC2ECD181900C60C3D /* OralableForProfessionals.app */;
+			productType = "com.apple.product-type.application";
+		};
+		26D6C3FB2ECD181B00C60C3D /* OralableForProfessionalsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26D6C4122ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionalsTests" */;
+			buildPhases = (
+				26D6C3F82ECD181B00C60C3D /* Sources */,
+				26D6C3F92ECD181B00C60C3D /* Frameworks */,
+				26D6C3FA2ECD181B00C60C3D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26D6C3FE2ECD181B00C60C3D /* PBXTargetDependency */,
+			);
+			name = OralableForProfessionalsTests;
+			packageProductDependencies = (
+				26FE17DB2EE6DC9000026648 /* AsyncAlgorithms */,
+			);
+			productName = OralableForDentistsTests;
+			productReference = 26D6C3FC2ECD181B00C60C3D /* OralableForProfessionalsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		26D6C4052ECD181B00C60C3D /* OralableForProfessionalsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26D6C4152ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionalsUITests" */;
+			buildPhases = (
+				26D6C4022ECD181B00C60C3D /* Sources */,
+				26D6C4032ECD181B00C60C3D /* Frameworks */,
+				26D6C4042ECD181B00C60C3D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26D6C4082ECD181B00C60C3D /* PBXTargetDependency */,
+			);
+			name = OralableForProfessionalsUITests;
+			packageProductDependencies = (
+				2671AFE92EE7BDE700A5D229 /* AsyncAlgorithms */,
+			);
+			productName = OralableForDentistsUITests;
+			productReference = 26D6C4062ECD181B00C60C3D /* OralableForProfessionalsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		26CAF2562E781EFB003FE378 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					26CAF25D2E781EFB003FE378 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					26CAF26E2E781EFE003FE378 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 26CAF25D2E781EFB003FE378;
+					};
+					26CAF2782E781EFE003FE378 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 26CAF25D2E781EFB003FE378;
+					};
+					26D6C3EB2ECD181900C60C3D = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					26D6C3FB2ECD181B00C60C3D = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = 26D6C3EB2ECD181900C60C3D;
+					};
+					26D6C4052ECD181B00C60C3D = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = 26D6C3EB2ECD181900C60C3D;
+					};
+				};
+			};
+			buildConfigurationList = 26CAF2592E781EFB003FE378 /* Build configuration list for PBXProject "OralableApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 26CAF2552E781EFB003FE378;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+				26785D352ED6C850004BA1A3 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				26FE17BB2EE6D77F00026648 /* XCRemoteSwiftPackageReference "AsyncBluetooth" */,
+				260RALC012EFF000000000001 /* XCLocalSwiftPackageReference "../../OralableCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 26CAF25F2E781EFB003FE378 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				26CAF25D2E781EFB003FE378 /* OralableApp */,
+				26CAF26E2E781EFE003FE378 /* OralableAppTests */,
+				26CAF2782E781EFE003FE378 /* OralableAppUITests */,
+				26D6C3EB2ECD181900C60C3D /* OralableForProfessionals */,
+				26D6C3FB2ECD181B00C60C3D /* OralableForProfessionalsTests */,
+				26D6C4052ECD181B00C60C3D /* OralableForProfessionalsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		26CAF25C2E781EFB003FE378 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF26D2E781EFE003FE378 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF2772E781EFE003FE378 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3EA2ECD181900C60C3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26917C402EED577900B25687 /* demo_participant_all_sessions.csv in Resources */,
+				26917C412EED577900B25687 /* demo_participant_session_2.csv in Resources */,
+				26917C422EED577900B25687 /* demo_participant_session_1.csv in Resources */,
+				26917C432EED577900B25687 /* demo_participant_session_3.csv in Resources */,
+				26FE17BF2EE6D96A00026648 /* ProfessionalConfiguration.storekit in Resources */,
+				26FE17B92EE6D6AF00026648 /* PrivacyInfo.xcprivacy in Resources */,
+				26FE17C02EE6D97500026648 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3FA2ECD181B00C60C3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C4042ECD181B00C60C3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		26CAF25A2E781EFB003FE378 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF26B2E781EFE003FE378 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26CAF2752E781EFE003FE378 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3E82ECD181900C60C3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26FE17BE2EE6D93400026648 /* OralableForProfessionals.swift in Sources */,
+				26FE17C12EE6D99300026648 /* ProfessionalDataManager.swift in Sources */,
+				26917C362EED552800B25687 /* DemoDataManager.swift in Sources */,
+				26FE17C22EE6D99300026648 /* ProfessionalAuthenticationManager.swift in Sources */,
+				26FE17C42EE6D99300026648 /* ProfessionalSubscriptionManager.swift in Sources */,
+				26FE17C52EE6D99300026648 /* BaseAuthenticationManager.swift in Sources */,
+				26FE17D22EE6D9CC00026648 /* PatientListViewModel.swift in Sources */,
+				26FE17D32EE6D9CC00026648 /* PatientDashboardViewModel.swift in Sources */,
+				26FE17D92EE6DA0400026648 /* SharedComponents.swift in Sources */,
+				26FE17D42EE6D9CC00026648 /* ProfessionalSettingsViewModel.swift in Sources */,
+				26FE17D52EE6D9CC00026648 /* AddPatientViewModel.swift in Sources */,
+				26FE17D62EE6D9CC00026648 /* PatientHistoricalViewModel.swift in Sources */,
+				26FE17C92EE6D9B300026648 /* PatientHistoricalView.swift in Sources */,
+				26FE17CA2EE6D9B300026648 /* ProfessionalsSettingsView.swift in Sources */,
+				26FE17D72EE6D9D900026648 /* SharedSensorModels.swift in Sources */,
+				26FE17D82EE6D9D900026648 /* ProfessionalHistoricalDataModels.swift in Sources */,
+				26FE17E02EE8A00000026648 /* CSVParser.swift in Sources */,
+				26FE17CB2EE6D9B300026648 /* PatientDashboardView.swift in Sources */,
+				26FE17CC2EE6D9B300026648 /* AddPatientView.swift in Sources */,
+				26FE17CD2EE6D9B300026648 /* PatientListView.swift in Sources */,
+				26FE17CE2EE6D9B300026648 /* DeveloperSettingsView.swift in Sources */,
+				26FE17CF2EE6D9B300026648 /* PatientDetailView.swift in Sources */,
+				26FE17D02EE6D9B300026648 /* UpgradePromptView.swift in Sources */,
+				26917C382EED554000B25687 /* DemoParticipantDetailView.swift in Sources */,
+				26FE17C62EE6D99300026648 /* DesignSystem.swift in Sources */,
+				26FE17C72EE6D99300026648 /* ProfessionaltAppDependencies.swift in Sources */,
+				26FE17C82EE6D99300026648 /* FeatureFlags.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C3F82ECD181B00C60C3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26D6C4022ECD181B00C60C3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26FE17DD2EE6DCE900026648 /* OralableForProfessionalsUITestsLaunchTests.swift in Sources */,
+				26FE17DE2EE6DCF200026648 /* OralableForProfessionalsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		26CAF2712E781EFE003FE378 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26CAF25D2E781EFB003FE378 /* OralableApp */;
+			targetProxy = 26CAF2702E781EFE003FE378 /* PBXContainerItemProxy */;
+		};
+		26CAF27B2E781EFE003FE378 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26CAF25D2E781EFB003FE378 /* OralableApp */;
+			targetProxy = 26CAF27A2E781EFE003FE378 /* PBXContainerItemProxy */;
+		};
+		26D6C3FE2ECD181B00C60C3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26D6C3EB2ECD181900C60C3D /* OralableForProfessionals */;
+			targetProxy = 26D6C3FD2ECD181B00C60C3D /* PBXContainerItemProxy */;
+		};
+		26D6C4082ECD181B00C60C3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26D6C3EB2ECD181900C60C3D /* OralableForProfessionals */;
+			targetProxy = 26D6C4072ECD181B00C60C3D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		26CAF2832E781EFE003FE378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OralableApp/OralableApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OralableApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Oralable;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Oralable needs Bluetooth to connect to your TGM device for monitoring sensor data";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Oralable needs Bluetooth to connect to your TGM device for monitoring sensor data";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "armv7 bluetooth-le";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oralable.mam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		26CAF2842E781EFE003FE378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OralableApp/OralableApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OralableApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Oralable;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Oralable needs Bluetooth to connect to your TGM device for monitoring sensor data";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Oralable needs Bluetooth to connect to your TGM device for monitoring sensor data";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "armv7 bluetooth-le";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oralable.mam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		26CAF2852E781EFE003FE378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		26CAF2862E781EFE003FE378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		26CAF2882E781EFE003FE378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacdentalsolutions.OralableAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OralableApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OralableApp";
+			};
+			name = Debug;
+		};
+		26CAF2892E781EFE003FE378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacdentalsolutions.OralableAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OralableApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OralableApp";
+			};
+			name = Release;
+		};
+		26CAF28B2E781EFE003FE378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacdentalsolutions.OralableAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OralableApp;
+			};
+			name = Debug;
+		};
+		26CAF28C2E781EFE003FE378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jacdentalsolutions.OralableAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OralableApp;
+			};
+			name = Release;
+		};
+		26D6C4102ECD181B00C60C3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OralableForProfessionals/OralableForProfessionals.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OralableForProfessionals/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Oralable For Professionals";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.oralable.professionals;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		26D6C4112ECD181B00C60C3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OralableForProfessionals/OralableForProfessionals.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OralableForProfessionals/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Oralable For Professionals";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 4.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.oralable.professionals;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		26D6C4132ECD181B00C60C3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.OralableForDentistsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OralableForDentists.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OralableForDentists";
+			};
+			name = Debug;
+		};
+		26D6C4142ECD181B00C60C3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.OralableForProfessionalsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OralableForDentists.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OralableForDentists";
+			};
+			name = Release;
+		};
+		26D6C4162ECD181B00C60C3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.OralableForDentistsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OralableForDentists;
+			};
+			name = Debug;
+		};
+		26D6C4172ECD181B00C60C3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = THKF822TTP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jacdental.OralableForProfessionalsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OralableForDentists;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		26CAF2592E781EFB003FE378 /* Build configuration list for PBXProject "OralableApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26CAF2852E781EFE003FE378 /* Debug */,
+				26CAF2862E781EFE003FE378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26CAF2822E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26CAF2832E781EFE003FE378 /* Debug */,
+				26CAF2842E781EFE003FE378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26CAF2872E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26CAF2882E781EFE003FE378 /* Debug */,
+				26CAF2892E781EFE003FE378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26CAF28A2E781EFE003FE378 /* Build configuration list for PBXNativeTarget "OralableAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26CAF28B2E781EFE003FE378 /* Debug */,
+				26CAF28C2E781EFE003FE378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26D6C40F2ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionals" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26D6C4102ECD181B00C60C3D /* Debug */,
+				26D6C4112ECD181B00C60C3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26D6C4122ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionalsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26D6C4132ECD181B00C60C3D /* Debug */,
+				26D6C4142ECD181B00C60C3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26D6C4152ECD181B00C60C3D /* Build configuration list for PBXNativeTarget "OralableForProfessionalsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26D6C4162ECD181B00C60C3D /* Debug */,
+				26D6C4172ECD181B00C60C3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		260RALC012EFF000000000001 /* XCLocalSwiftPackageReference "../../OralableCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../OralableCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26785D352ED6C850004BA1A3 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		26FE17BB2EE6D77F00026648 /* XCRemoteSwiftPackageReference "AsyncBluetooth" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/manolofdez/AsyncBluetooth";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		260RALC022EFF000000000002 /* OralableCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OralableCore;
+		};
+		260RALC032EFF000000000003 /* OralableCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OralableCore;
+		};
+		2671AFE92EE7BDE700A5D229 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		26785D362ED6C96A004BA1A3 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26785D352ED6C850004BA1A3 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		26992C5E2ED6C28A00D9993D /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		26A0F47B2EBAE8C00054C5FC /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		26A0F47D2EBAE8D80054C5FC /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		26A0F47F2EBAE8EE0054C5FC /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		26FE17BC2EE6D77F00026648 /* AsyncBluetooth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26FE17BB2EE6D77F00026648 /* XCRemoteSwiftPackageReference "AsyncBluetooth" */;
+			productName = AsyncBluetooth;
+		};
+		26FE17DB2EE6DC9000026648 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 268E58EC2EBADD940064E2BB /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 26CAF2562E781EFB003FE378 /* Project object */;
+}
