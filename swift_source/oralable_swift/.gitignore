@@ -1,0 +1,14 @@
+# West / Zephyr SDK folders (Do NOT upload these)
+/zephyr/
+/nrf/
+/modules/
+/bootloader/
+/tools/
+/.west/
+
+# Build artifacts
+/build/
+/build_*/
+
+# OS-specific
+.DS_Store
