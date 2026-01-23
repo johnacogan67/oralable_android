@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Collections
 import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
@@ -68,6 +69,7 @@ class BluetoothLeManager private constructor(private val context: Context) {
 
     private val gattMap = ConcurrentHashMap<String, BluetoothGatt>()
     private val notificationQueueMap = ConcurrentHashMap<String, Queue<BluetoothGattDescriptor>>()
+    private val disconnectingDevices = Collections.newSetFromMap(ConcurrentHashMap<String, Boolean>())
 
     companion object {
         @Volatile
@@ -96,8 +98,7 @@ class BluetoothLeManager private constructor(private val context: Context) {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
             val name = result.device.name ?: result.scanRecord?.deviceName ?: "Unknown"
-            Log.d("BluetoothLeManager", "Device found: $name - ${result.device.address}")
-
+            
             val discoveredDevice = DiscoveredDevice(result.device, name, result.rssi)
             if (_discoveredDevices.value.none { it.device.address == discoveredDevice.device.address }) {
                 _discoveredDevices.value = _discoveredDevices.value + discoveredDevice
@@ -116,11 +117,13 @@ class BluetoothLeManager private constructor(private val context: Context) {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             val address = gatt.device.address
             if (newState == BluetoothProfile.STATE_CONNECTED) {
+                disconnectingDevices.remove(address)
                 gattMap[address] = gatt
                 gatt.discoverServices()
             } else {
                 val closedGatt = gattMap.remove(address)
                 closedGatt?.close()
+                // Do NOT clear the disconnecting flag here, leave it tainted
                 val error = if (status != BluetoothGatt.GATT_SUCCESS) {
                     BLEError.UnexpectedDisconnection(gatt.device, "GATT Status: $status")
                 } else null
@@ -133,12 +136,14 @@ class BluetoothLeManager private constructor(private val context: Context) {
         }
         
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
+            if (disconnectingDevices.contains(gatt.device.address)) {
+                return
+            }
             _eventFlow.tryEmit(BLEEvent.DataReceived(gatt.device, characteristic, value))
         }
         
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             super.onDescriptorWrite(gatt, descriptor, status)
-            Log.d("BluetoothLeManager", "Descriptor written for ${descriptor.characteristic.uuid}")
             processNotificationQueue(gatt.device.address)
         }
     }
@@ -180,47 +185,31 @@ class BluetoothLeManager private constructor(private val context: Context) {
             return
         }
         _discoveredDevices.value = emptyList()
-        Log.d("BluetoothLeManager", "Starting BLE scan")
         bluetoothLeScanner?.startScan(scanCallback)
     }
 
     fun stopScan() {
         if (!hasPermissions()) return
-        Log.d("BluetoothLeManager", "Stopping BLE scan")
         bluetoothLeScanner?.stopScan(scanCallback)
     }
 
     fun connect(device: BluetoothDevice) {
-        if (!hasPermissions()) {
-            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothUnauthorized))
-            return
-        }
-        if (!isBluetoothEnabled()) {
-            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothNotReady))
-            return
-        }
+        if (!hasPermissions() || !isBluetoothEnabled()) return
+        disconnectingDevices.remove(device.address) // Clear the flag on a new connection attempt
         device.connectGatt(context, false, gattCallback)
     }
 
     fun connectToAddress(address: String) {
-        if (!hasPermissions()) {
-            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothUnauthorized))
-            return
-        }
-        if (!isBluetoothEnabled()) {
-            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothNotReady))
-            return
-        }
+        if (!hasPermissions() || !isBluetoothEnabled()) return
         val device = bluetoothAdapter?.getRemoteDevice(address)
         if (device != null) {
             connect(device)
-        } else {
-            Log.e("BluetoothLeManager", "Device not found for address: $address")
         }
     }
 
     fun disconnect(address: String) {
         if (!hasPermissions()) return
+        disconnectingDevices.add(address)
         gattMap[address]?.disconnect()
     }
 
@@ -264,10 +253,8 @@ class BluetoothLeManager private constructor(private val context: Context) {
         if (queue != null && queue.isNotEmpty()) {
             val descriptor = queue.poll()
             gattMap[address]?.writeDescriptor(descriptor)
-            Log.d("BluetoothLeManager", "Writing descriptor for ${descriptor.characteristic.uuid}")
         } else {
             gattMap[address]?.let {
-                Log.d("BluetoothLeManager", "Emitting DeviceConnected event for ${it.device.address}")
                 _eventFlow.tryEmit(BLEEvent.DeviceConnected(it.device))
             }
         }
