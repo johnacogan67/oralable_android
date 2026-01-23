@@ -16,9 +16,38 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.LinkedList
 import java.util.Queue
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+
+sealed class BLEError(val message: String) {
+    object BluetoothNotReady : BLEError("Bluetooth is not ready.")
+    object BluetoothUnauthorized : BLEError("Bluetooth permissions are not granted.")
+    object BluetoothUnsupported : BLEError("Bluetooth LE is not supported on this device.")
+    object BluetoothResetting : BLEError("Bluetooth is resetting.")
+    data class ConnectionFailed(val device: BluetoothDevice, val reason: String) : BLEError("Connection failed to ${device.address}: $reason")
+    data class UnexpectedDisconnection(val device: BluetoothDevice, val reason: String?) : BLEError("Unexpected disconnection from ${device.address}: ${reason ?: "No reason given"}")
+}
+
+sealed class BLEEvent {
+    data class DeviceDiscovered(val device: BluetoothDevice, val name: String, val rssi: Int) : BLEEvent()
+    data class DeviceConnected(val device: BluetoothDevice) : BLEEvent()
+    data class DeviceDisconnected(val device: BluetoothDevice, val error: BLEError?) : BLEEvent()
+    data class BluetoothStateChanged(val state: Int) : BLEEvent()
+    data class DataReceived(val device: BluetoothDevice, val characteristic: BluetoothGattCharacteristic, val value: ByteArray) : BLEEvent()
+    data class Error(val error: BLEError) : BLEEvent()
+}
+
+data class DiscoveredDevice(
+    val device: BluetoothDevice,
+    val name: String,
+    val rssi: Int
+)
 
 @SuppressLint("MissingPermission")
 class BluetoothLeManager private constructor(private val context: Context) {
@@ -26,12 +55,19 @@ class BluetoothLeManager private constructor(private val context: Context) {
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
     private val bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
+    private val devicePersistence = DevicePersistence(context)
 
-    private var onDeviceFound: ((BluetoothDevice) -> Unit)? = null
-    private var onConnectionStateChange: ((BluetoothDevice, Boolean, Boolean) -> Unit)? = null
-    private var onDataReceived: ((BluetoothGattCharacteristic, ByteArray) -> Unit)? = null
-    private var gatt: BluetoothGatt? = null
-    private val notificationQueue: Queue<BluetoothGattDescriptor> = LinkedList()
+    private val _eventFlow = MutableSharedFlow<BLEEvent>(replay = 5)
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    private val _discoveredDevices = MutableStateFlow<List<DiscoveredDevice>>(emptyList())
+    val discoveredDevices = _discoveredDevices.asStateFlow()
+
+    private val _bluetoothState = MutableStateFlow(bluetoothAdapter?.state ?: BluetoothAdapter.STATE_OFF)
+    val bluetoothState = _bluetoothState.asStateFlow()
+
+    private val gattMap = ConcurrentHashMap<String, BluetoothGatt>()
+    private val notificationQueueMap = ConcurrentHashMap<String, Queue<BluetoothGattDescriptor>>()
 
     companion object {
         @Volatile
@@ -49,40 +85,61 @@ class BluetoothLeManager private constructor(private val context: Context) {
         val SENSOR_DATA_CHAR_UUID: UUID = UUID.fromString("3A0FF001-98C4-46B2-94AF-1AEE0FD4C48E")
         val ACCELEROMETER_CHAR_UUID: UUID = UUID.fromString("3A0FF002-98C4-46B2-94AF-1AEE0FD4C48E")
         val TEMPERATURE_CHAR_UUID: UUID = UUID.fromString("3A0FF003-98C4-46B2-94AF-1AEE0FD4C48E")
+
+        val ANR_SERVICE_UUID: UUID = UUID.fromString("00001815-0000-1000-8000-00805f9b34fb")
+        val EMG_CHAR_UUID: UUID = UUID.fromString("00002a58-0000-1000-8000-00805f9b34fb")
+
         val CLIENT_CHARACTERISTIC_CONFIG: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
-            onDeviceFound?.invoke(result.device)
+            val name = result.device.name ?: result.scanRecord?.deviceName ?: "Unknown"
+            Log.d("BluetoothLeManager", "Device found: $name - ${result.device.address}")
+
+            val discoveredDevice = DiscoveredDevice(result.device, name, result.rssi)
+            if (_discoveredDevices.value.none { it.device.address == discoveredDevice.device.address }) {
+                _discoveredDevices.value = _discoveredDevices.value + discoveredDevice
+            }
+            
+            _eventFlow.tryEmit(BLEEvent.DeviceDiscovered(result.device, name, result.rssi))
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Log.e("BluetoothLeManager", "Scan failed with error code: $errorCode")
         }
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+            val address = gatt.device.address
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                this@BluetoothLeManager.gatt = gatt
+                gattMap[address] = gatt
                 gatt.discoverServices()
-                onConnectionStateChange?.invoke(gatt.device, true, false)
             } else {
-                onConnectionStateChange?.invoke(gatt.device, false, false)
+                val closedGatt = gattMap.remove(address)
+                closedGatt?.close()
+                val error = if (status != BluetoothGatt.GATT_SUCCESS) {
+                    BLEError.UnexpectedDisconnection(gatt.device, "GATT Status: $status")
+                } else null
+                _eventFlow.tryEmit(BLEEvent.DeviceDisconnected(gatt.device, error))
             }
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             enableNotifications(gatt)
-            onConnectionStateChange?.invoke(gatt.device, true, true)
         }
         
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
-            onDataReceived?.invoke(characteristic, value)
+            _eventFlow.tryEmit(BLEEvent.DataReceived(gatt.device, characteristic, value))
         }
         
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             super.onDescriptorWrite(gatt, descriptor, status)
             Log.d("BluetoothLeManager", "Descriptor written for ${descriptor.characteristic.uuid}")
-            processNotificationQueue()
+            processNotificationQueue(gatt.device.address)
         }
     }
 
@@ -103,63 +160,116 @@ class BluetoothLeManager private constructor(private val context: Context) {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun startScan(onDeviceFound: (BluetoothDevice) -> Unit) {
-        if (!hasPermissions() || !isBluetoothEnabled()) return
-        this.onDeviceFound = onDeviceFound
+    fun reconnectToSavedDevices() {
+        if (!isBluetoothEnabled() || !hasPermissions()) {
+            return
+        }
+        val savedDevices = devicePersistence.getSavedDeviceAddresses()
+        savedDevices.forEach { address ->
+            connectToAddress(address)
+        }
+    }
+
+    fun startScan() {
+        if (!hasPermissions()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothUnauthorized))
+            return
+        }
+        if (!isBluetoothEnabled()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothNotReady))
+            return
+        }
+        _discoveredDevices.value = emptyList()
+        Log.d("BluetoothLeManager", "Starting BLE scan")
         bluetoothLeScanner?.startScan(scanCallback)
     }
 
     fun stopScan() {
         if (!hasPermissions()) return
+        Log.d("BluetoothLeManager", "Stopping BLE scan")
         bluetoothLeScanner?.stopScan(scanCallback)
     }
 
-    fun connect(device: BluetoothDevice, onConnectionStateChange: (BluetoothDevice, Boolean, Boolean) -> Unit) {
-        if (!hasPermissions()) return
-        this.onConnectionStateChange = onConnectionStateChange
+    fun connect(device: BluetoothDevice) {
+        if (!hasPermissions()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothUnauthorized))
+            return
+        }
+        if (!isBluetoothEnabled()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothNotReady))
+            return
+        }
         device.connectGatt(context, false, gattCallback)
     }
 
-    fun disconnect() {
-        if (!hasPermissions()) return
-        gatt?.disconnect()
+    fun connectToAddress(address: String) {
+        if (!hasPermissions()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothUnauthorized))
+            return
+        }
+        if (!isBluetoothEnabled()) {
+            _eventFlow.tryEmit(BLEEvent.Error(BLEError.BluetoothNotReady))
+            return
+        }
+        val device = bluetoothAdapter?.getRemoteDevice(address)
+        if (device != null) {
+            connect(device)
+        } else {
+            Log.e("BluetoothLeManager", "Device not found for address: $address")
+        }
     }
-    
-    fun setOnDataReceivedListener(listener: (BluetoothGattCharacteristic, ByteArray) -> Unit) {
-        onDataReceived = listener
+
+    fun disconnect(address: String) {
+        if (!hasPermissions()) return
+        gattMap[address]?.disconnect()
     }
 
     private fun enableNotifications(gatt: BluetoothGatt) {
-        val service = gatt.getService(TGM_SERVICE_UUID)
-        if (service == null) {
-            Log.e("BluetoothLeManager", "TGM service not found")
-            return
-        }
-
-        val characteristics = listOf(
-            service.getCharacteristic(SENSOR_DATA_CHAR_UUID),
-            service.getCharacteristic(ACCELEROMETER_CHAR_UUID),
-            service.getCharacteristic(TEMPERATURE_CHAR_UUID)
-        )
-
-        for (characteristic in characteristics) {
-            if (characteristic == null) {
-                Log.w("BluetoothLeManager", "A characteristic was not found")
-                continue
+        val address = gatt.device.address
+        val queue = notificationQueueMap.getOrPut(address) { LinkedList() }
+        
+        val tgmService = gatt.getService(TGM_SERVICE_UUID)
+        if (tgmService != null) {
+            val characteristics = listOf(
+                tgmService.getCharacteristic(SENSOR_DATA_CHAR_UUID),
+                tgmService.getCharacteristic(ACCELEROMETER_CHAR_UUID),
+                tgmService.getCharacteristic(TEMPERATURE_CHAR_UUID)
+            )
+            for (characteristic in characteristics) {
+                if (characteristic != null) {
+                    gatt.setCharacteristicNotification(characteristic, true)
+                    val descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+                    descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    queue.add(descriptor)
+                }
             }
-            gatt.setCharacteristicNotification(characteristic, true)
-            val descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
-            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-            notificationQueue.add(descriptor)
         }
-        processNotificationQueue()
+        
+        val anrService = gatt.getService(ANR_SERVICE_UUID)
+        if (anrService != null) {
+            val emgCharacteristic = anrService.getCharacteristic(EMG_CHAR_UUID)
+            if (emgCharacteristic != null) {
+                gatt.setCharacteristicNotification(emgCharacteristic, true)
+                val descriptor = emgCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+                descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                queue.add(descriptor)
+            }
+        }
+        
+        processNotificationQueue(address)
     }
     
-    private fun processNotificationQueue() {
-        if (notificationQueue.isNotEmpty()) {
-            val descriptor = notificationQueue.poll()
-            gatt?.writeDescriptor(descriptor)
+    private fun processNotificationQueue(address: String) {
+        val queue = notificationQueueMap[address]
+        if (queue != null && queue.isNotEmpty()) {
+            val descriptor = queue.poll()
+            gattMap[address]?.writeDescriptor(descriptor)
             Log.d("BluetoothLeManager", "Writing descriptor for ${descriptor.characteristic.uuid}")
+        } else {
+            gattMap[address]?.let {
+                Log.d("BluetoothLeManager", "Emitting DeviceConnected event for ${it.device.address}")
+                _eventFlow.tryEmit(BLEEvent.DeviceConnected(it.device))
+            }
         }
     }
 }

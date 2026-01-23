@@ -2,16 +2,18 @@ package com.oralable.app202060114.viewmodels
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.bluetooth.BluetoothDevice
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.oralable.app202060114.bluetooth.BLEEvent
 import com.oralable.app202060114.bluetooth.BluetoothLeManager
-import com.oralable.app202060114.bluetooth.ConnectionManager
+import com.oralable.app202060114.bluetooth.DevicePersistence
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 data class Device(
@@ -33,10 +35,10 @@ data class DevicesUiState(
 @SuppressLint("MissingPermission")
 class DevicesViewModel(application: Application) : AndroidViewModel(application) {
     private val bluetoothLeManager = BluetoothLeManager.getInstance(application)
+    private val devicePersistence = DevicePersistence(application)
     private val _uiState = MutableStateFlow(DevicesUiState())
     val uiState: StateFlow<DevicesUiState> = _uiState.asStateFlow()
 
-    private val discoveredDevices = mutableMapOf<String, BluetoothDevice>()
     private val myDevices = mutableMapOf<String, Device>()
 
     init {
@@ -44,6 +46,62 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
             myDevices = myDevices.values.toList(),
             bluetoothEnabled = bluetoothLeManager.isBluetoothEnabled()
         )
+
+        if (bluetoothLeManager.hasPermissions()) {
+            bluetoothLeManager.reconnectToSavedDevices()
+        }
+
+        bluetoothLeManager.discoveredDevices
+            .onEach { devices ->
+                val otherDevices = devices
+                    .filter { !myDevices.containsKey(it.device.address) && it.name != "Unknown" }
+                    .map {
+                        Device(
+                            name = it.name,
+                            address = it.device.address,
+                            status = "Not Connected",
+                            statusColor = Color.Gray,
+                            onInfoClick = null
+                        )
+                    }
+                _uiState.value = _uiState.value.copy(otherDevices = otherDevices)
+            }
+            .launchIn(viewModelScope)
+
+        bluetoothLeManager.eventFlow
+            .onEach { event ->
+                when (event) {
+                    is BLEEvent.DeviceConnected -> {
+                        val connectedDevice = event.device
+                        devicePersistence.saveDevice(connectedDevice.address)
+                        val newDevice = Device(
+                            name = connectedDevice.name ?: "Unknown",
+                            address = connectedDevice.address,
+                            status = "Ready",
+                            statusColor = Color.Green,
+                            onInfoClick = {}
+                        )
+                        myDevices[connectedDevice.address] = newDevice
+
+                        val newOtherDevices = _uiState.value.otherDevices.filterNot { it.address == connectedDevice.address }
+
+                        _uiState.value = _uiState.value.copy(
+                            myDevices = myDevices.values.toList(),
+                            otherDevices = newOtherDevices
+                        )
+                    }
+                    is BLEEvent.DeviceDisconnected -> {
+                        handleDisconnection(event.device.address)
+                    }
+                    is BLEEvent.Error -> {
+                        if (event.error is com.oralable.app202060114.bluetooth.BLEError.BluetoothUnauthorized) {
+                            _uiState.value = _uiState.value.copy(needsPermissions = true)
+                        }
+                    }
+                    else -> {}
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun startScan() {
@@ -55,15 +113,9 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
             _uiState.value = _uiState.value.copy(bluetoothEnabled = false)
             return
         }
-        _uiState.value = _uiState.value.copy(isScanning = true, otherDevices = emptyList())
-        discoveredDevices.clear()
+        _uiState.value = _uiState.value.copy(isScanning = true)
 
-        bluetoothLeManager.startScan { device ->
-            if (device.name != null && !myDevices.containsKey(device.address)) {
-                discoveredDevices[device.address] = device
-                updateOtherDevicesList()
-            }
-        }
+        bluetoothLeManager.startScan()
 
         viewModelScope.launch {
             delay(10000) // Scan for 10 seconds
@@ -77,57 +129,24 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun connectToDevice(address: String) {
-        val device = discoveredDevices[address] ?: return
+        val device = bluetoothLeManager.discoveredDevices.value.find { it.device.address == address }?.device ?: return
         updateDeviceStatus(address, "Connecting...", Color(0xFFFFA500))
-
-        bluetoothLeManager.connect(device) { connectedDevice, isConnected, servicesDiscovered ->
-            if (isConnected) {
-                if (servicesDiscovered) {
-                    val newDevice = Device(
-                        name = connectedDevice.name,
-                        address = connectedDevice.address,
-                        status = "Ready",
-                        statusColor = Color.Green,
-                        onInfoClick = {}
-                    )
-                    myDevices[address] = newDevice
-                    _uiState.value = _uiState.value.copy(myDevices = myDevices.values.toList())
-                    removeDeviceFromOtherDevices(connectedDevice.address)
-                    if (connectedDevice.name.contains("Oralable", ignoreCase = true)) {
-                        ConnectionManager.setOralableConnected(true)
-                    } else if (connectedDevice.name.contains("ANR", ignoreCase = true)) {
-                        ConnectionManager.setAnrConnected(true)
-                    }
-                } else {
-                    updateDeviceStatus(connectedDevice.address, "Discovering Services...", Color(0xFFFFA500))
-                }
-            } else {
-                handleDisconnection(address, "Failed", Color.Red)
-            }
-        }
+        bluetoothLeManager.connect(device)
     }
     
     fun disconnect(address: String) {
-        bluetoothLeManager.disconnect()
-        handleDisconnection(address, "Not Connected", Color.Gray)
+        bluetoothLeManager.disconnect(address)
     }
     
     fun forgetDevice(address: String) {
+        devicePersistence.removeDevice(address)
         disconnect(address)
-        myDevices.remove(address)
-        _uiState.value = _uiState.value.copy(myDevices = myDevices.values.toList())
     }
 
-    private fun handleDisconnection(address: String, status: String, color: Color) {
-        updateDeviceStatus(address, status, color)
+    private fun handleDisconnection(address: String) {
         if (myDevices.containsKey(address)) {
-            myDevices[address] = myDevices[address]!!.copy(status = status, statusColor = color)
+            myDevices.remove(address)
             _uiState.value = _uiState.value.copy(myDevices = myDevices.values.toList())
-            if (myDevices[address]?.name?.contains("Oralable", ignoreCase = true) == true) {
-                ConnectionManager.setOralableConnected(false)
-            } else if (myDevices[address]?.name?.contains("ANR", ignoreCase = true) == true) {
-                ConnectionManager.setAnrConnected(false)
-            }
         }
     }
 
@@ -140,20 +159,9 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
         }
     }
     
-    private fun removeDeviceFromOtherDevices(address: String) {
-        val currentList = _uiState.value.otherDevices.toMutableList()
-        currentList.removeAll { it.address == address }
-        _uiState.value = _uiState.value.copy(otherDevices = currentList)
-    }
-    
-    private fun updateOtherDevicesList() {
-        _uiState.value = _uiState.value.copy(otherDevices = discoveredDevices.values.map {
-            Device(it.name, it.address, "Not Connected", Color.Gray, null)
-        })
-    }
-
     fun permissionsGranted() {
         _uiState.value = _uiState.value.copy(needsPermissions = false)
+        bluetoothLeManager.reconnectToSavedDevices()
         startScan()
     }
 }

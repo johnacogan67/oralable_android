@@ -4,9 +4,13 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -17,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -74,9 +79,11 @@ fun DevicesScreen(
         )
     }
 
-    Column(modifier = modifier.padding(16.dp)) {
-        Text(text = "My Devices", style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
-        uiState.myDevices.forEach { device ->
+    LazyColumn(modifier = modifier.padding(16.dp)) {
+        item {
+            Text(text = "My Devices", style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
+        }
+        items(uiState.myDevices) { device ->
             DeviceRow(
                 name = device.name,
                 address = device.address,
@@ -86,16 +93,25 @@ fun DevicesScreen(
                 onInfoClick = device.onInfoClick
             )
         }
-        Row(modifier = Modifier.padding(top = 16.dp)) {
-            Text(text = "Other Devices", style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
-            if (uiState.isScanning) {
-                CircularProgressIndicator(modifier = Modifier.padding(start = 8.dp))
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Other Devices", style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
+                if (uiState.isScanning) {
+                    CircularProgressIndicator(modifier = Modifier.padding(start = 8.dp))
+                }
             }
         }
         if (!uiState.bluetoothEnabled) {
-            Text("Please turn on Bluetooth", color = androidx.compose.ui.graphics.Color.Red)
+            item {
+                Text("Please turn on Bluetooth", color = androidx.compose.ui.graphics.Color.Red)
+            }
         }
-        uiState.otherDevices.forEach { device ->
+        items(uiState.otherDevices) { device ->
             DeviceRow(
                 name = device.name,
                 address = device.address,
@@ -105,8 +121,17 @@ fun DevicesScreen(
                 onInfoClick = device.onInfoClick
             )
         }
-        Button(onClick = { viewModel.startScan() }, modifier = Modifier.padding(top = 16.dp)) {
-            Text(if (uiState.isScanning) "Scanning..." else "Scan")
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(onClick = { viewModel.startScan() }) {
+                    Text(if (uiState.isScanning) "Scanning..." else "Scan")
+                }
+            }
         }
     }
 }

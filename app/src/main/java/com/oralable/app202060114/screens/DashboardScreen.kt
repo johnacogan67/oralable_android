@@ -3,9 +3,13 @@ package com.oralable.app202060114.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material.icons.filled.Waves
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,8 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.oralable.app202060114.composables.DeviceStatusIndicator
-import com.oralable.app202060114.composables.HealthMetricCard
-import com.oralable.app202060114.composables.MovementMetricCard
+import com.oralable.app202060114.composables.MetricCard
 import com.oralable.app202060114.composables.RecordingButton
 import com.oralable.app202060114.viewmodels.DashboardViewModel
 
@@ -28,7 +31,9 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         DeviceStatusIndicator(deviceName = "Oralable", isConnected = uiState.oralableConnected)
@@ -40,24 +45,34 @@ fun DashboardScreen(
             action = { viewModel.toggleRecording() },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        HealthMetricCard(
-            icon = Icons.Default.Timeline,
+        MetricCard(
             title = "PPG Sensor",
             value = uiState.ppgValue,
             unit = "Oralable IR",
-            color = Color.Magenta
+            icon = Icons.Default.Timeline,
+            iconColor = Color.Magenta
         )
-        MovementMetricCard(
+        MetricCard(
+            title = "Movement",
             value = uiState.movementValue,
             unit = "g",
-            status = uiState.movementStatus
+            icon = Icons.Default.DirectionsRun,
+            iconColor = Color.Blue,
+            subtitle = uiState.movementStatus
         )
-        HealthMetricCard(
-            icon = Icons.Default.Thermostat,
+        MetricCard(
             title = "Temperature",
             value = uiState.temperatureValue,
             unit = "°C",
-            color = Color.Red
+            icon = Icons.Default.Thermostat,
+            iconColor = Color.Red
+        )
+        MetricCard(
+            title = "EMG",
+            value = uiState.emgValue,
+            unit = "mV",
+            icon = Icons.Default.Waves,
+            iconColor = Color.Cyan
         )
     }
 }

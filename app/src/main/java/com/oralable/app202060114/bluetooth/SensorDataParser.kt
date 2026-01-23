@@ -6,6 +6,7 @@ import java.nio.ByteOrder
 data class PpgData(val ppgIr: Int, val ppgRed: Int, val ppgGreen: Int)
 data class AccelerometerData(val x: Short, val y: Short, val z: Short)
 data class TemperatureData(val celsius: Float)
+data class EmgData(val value: Double)
 
 object SensorDataParser {
     fun parsePpgData(data: ByteArray): PpgData? {
@@ -59,5 +60,17 @@ object SensorDataParser {
         val centiDegrees = buffer.short
         val celsius = centiDegrees / 100.0f
         return TemperatureData(celsius)
+    }
+
+    fun parseEmgData(data: ByteArray): EmgData? {
+        if (data.size < 2) {
+            return null
+        }
+        val buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
+        val rawValue = buffer.short.toInt() and 0xFFFF // Read as unsigned short
+        
+        // The Swift code normalizes the value by dividing by 1023.0
+        val normalizedValue = rawValue / 1023.0
+        return EmgData(normalizedValue)
     }
 }

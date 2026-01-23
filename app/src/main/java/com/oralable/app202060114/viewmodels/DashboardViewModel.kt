@@ -1,11 +1,16 @@
 package com.oralable.app202060114.viewmodels
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Application
+import android.bluetooth.BluetoothDevice
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.oralable.app202060114.bluetooth.BLEEvent
 import com.oralable.app202060114.bluetooth.BluetoothLeManager
-import com.oralable.app202060114.bluetooth.ConnectionManager
 import com.oralable.app202060114.bluetooth.SensorDataParser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,9 +28,11 @@ data class DashboardUiState(
     val ppgValue: String = "0",
     val movementValue: String = "0.00",
     val movementStatus: String = "Still",
-    val temperatureValue: String = "0.0"
+    val temperatureValue: String = "0.0",
+    val emgValue: String = "0.00"
 )
 
+@SuppressLint("MissingPermission")
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
     private val bluetoothLeManager = BluetoothLeManager.getInstance(application)
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -36,53 +43,71 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val CALIBRATION_SIZE = 250
 
     init {
-        ConnectionManager.connectionState
-            .onEach { connectionState ->
-                _uiState.value = _uiState.value.copy(
-                    oralableConnected = connectionState.oralableConnected,
-                    anrConnected = connectionState.anrConnected
-                )
+        if (bluetoothLeManager.hasPermissions()) {
+            bluetoothLeManager.reconnectToSavedDevices()
+
+            bluetoothLeManager.eventFlow
+                .onEach { event ->
+                    when (event) {
+                        is BLEEvent.DeviceConnected -> {
+                            if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
+                                _uiState.value = _uiState.value.copy(oralableConnected = true)
+                            } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
+                                _uiState.value = _uiState.value.copy(anrConnected = true)
+                            }
+                        }
+                        is BLEEvent.DeviceDisconnected -> {
+                            if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
+                                _uiState.value = _uiState.value.copy(oralableConnected = false)
+                            } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
+                                _uiState.value = _uiState.value.copy(anrConnected = false)
+                            }
+                        }
+                        is BLEEvent.DataReceived -> {
+                            handleData(event.device, event.characteristic, event.value)
+                        }
+                        else -> {}
+                    }
+                }
+                .launchIn(viewModelScope)
+        }
+    }
+    
+    private fun handleData(device: BluetoothDevice, characteristic: android.bluetooth.BluetoothGattCharacteristic, data: ByteArray) {
+        val hexString = data.joinToString(separator = " ") { "%02X".format(it) }
+        Log.d("DashboardViewModel", "Received data from ${device.address} - ${characteristic.uuid}: $hexString")
+
+        when (characteristic.uuid) {
+            BluetoothLeManager.SENSOR_DATA_CHAR_UUID -> {
+                if (!_uiState.value.oralableConnected) return
+                val ppgData = SensorDataParser.parsePpgData(data)
+                if (ppgData != null) {
+                    _uiState.value = _uiState.value.copy(ppgValue = ppgData.ppgIr.toString())
+                }
             }
-            .launchIn(viewModelScope)
-
-        bluetoothLeManager.setOnDataReceivedListener { characteristic, data ->
-            val hexString = data.joinToString(separator = " ") { "%02X".format(it) }
-            Log.d("DashboardViewModel", "Received data from ${characteristic.uuid}: $hexString")
-
-            when (characteristic.uuid) {
-                BluetoothLeManager.SENSOR_DATA_CHAR_UUID -> {
-                    val ppgData = SensorDataParser.parsePpgData(data)
-                    if (ppgData != null) {
-                        Log.d("DashboardViewModel", "Parsed PPG data: IR=${ppgData.ppgIr}, Red=${ppgData.ppgRed}, Green=${ppgData.ppgGreen}")
-                        _uiState.value = _uiState.value.copy(ppgValue = ppgData.ppgIr.toString())
-                    } else {
-                        Log.w("DashboardViewModel", "Failed to parse PPG data.")
-                    }
+            BluetoothLeManager.ACCELEROMETER_CHAR_UUID -> {
+                if (!_uiState.value.oralableConnected) return
+                val accelerometerData = SensorDataParser.parseAccelerometerData(data)
+                if (accelerometerData != null) {
+                    val x = accelerometerData.x.toDouble()
+                    val y = accelerometerData.y.toDouble()
+                    val z = accelerometerData.z.toDouble()
+                    val magnitude = sqrt(x*x + y*y + z*z) / 16384.0
+                    updateMovement(magnitude)
                 }
-                BluetoothLeManager.ACCELEROMETER_CHAR_UUID -> {
-                    val accelerometerData = SensorDataParser.parseAccelerometerData(data)
-                    if (accelerometerData != null) {
-                        Log.d("DashboardViewModel", "Parsed Accelerometer data: X=${accelerometerData.x}, Y=${accelerometerData.y}, Z=${accelerometerData.z}")
-                        
-                        val x = accelerometerData.x.toDouble()
-                        val y = accelerometerData.y.toDouble()
-                        val z = accelerometerData.z.toDouble()
-
-                        val magnitude = sqrt(x*x + y*y + z*z) / 16384.0
-                        
-                        updateMovement(magnitude)
-                    } else {
-                        Log.w("DashboardViewModel", "Failed to parse Accelerometer data.")
-                    }
+            }
+            BluetoothLeManager.TEMPERATURE_CHAR_UUID -> {
+                if (!_uiState.value.oralableConnected) return
+                val temperatureData = SensorDataParser.parseTemperatureData(data)
+                if (temperatureData != null) {
+                    _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
                 }
-                BluetoothLeManager.TEMPERATURE_CHAR_UUID -> {
-                    val temperatureData = SensorDataParser.parseTemperatureData(data)
-                    if (temperatureData != null) {
-                        Log.d("DashboardViewModel", "Parsed Temperature data: ${temperatureData.celsius}°C")
-                        _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
-                    } else {
-                        Log.w("DashboardViewModel", "Failed to parse Temperature data.")
-                    }
+            }
+            BluetoothLeManager.EMG_CHAR_UUID -> {
+                if (!_uiState.value.anrConnected) return
+                val emgData = SensorDataParser.parseEmgData(data)
+                if (emgData != null) {
+                    _uiState.value = _uiState.value.copy(emgValue = String.format("%.2f", emgData.value))
                 }
             }
         }
