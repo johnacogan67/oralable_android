@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Waves
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.oralable.app202060114.composables.DeviceStatusIndicator
 import com.oralable.app202060114.composables.MetricCard
+import com.oralable.app202060114.composables.MovementGraphCard
 import com.oralable.app202060114.composables.RecordingButton
 import com.oralable.app202060114.viewmodels.DashboardViewModel
 
@@ -52,13 +52,12 @@ fun DashboardScreen(
             icon = Icons.Default.Timeline,
             iconColor = Color.Magenta
         )
-        MetricCard(
+        MovementGraphCard(
             title = "Movement",
             value = uiState.movementValue,
             unit = "g",
-            icon = Icons.Default.DirectionsRun,
-            iconColor = Color.Blue,
-            subtitle = uiState.movementStatus
+            subtitle = uiState.movementStatus,
+            data = uiState.movementHistory
         )
         MetricCard(
             title = "Temperature",

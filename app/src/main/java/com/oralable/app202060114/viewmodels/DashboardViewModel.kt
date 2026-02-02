@@ -1,24 +1,27 @@
 package com.oralable.app202060114.viewmodels
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.bluetooth.BluetoothDevice
-import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.oralable.app202060114.bluetooth.BLEEvent
 import com.oralable.app202060114.bluetooth.BluetoothLeManager
 import com.oralable.app202060114.bluetooth.SensorDataParser
+import com.oralable.app202060114.data.SensorDataPoint
+import com.oralable.app202060114.data.SensorDataStore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.LinkedList
 import kotlin.math.sqrt
+import java.util.concurrent.TimeUnit
 
 data class DashboardUiState(
     val isRecording: Boolean = false,
@@ -29,7 +32,8 @@ data class DashboardUiState(
     val movementValue: String = "0.00",
     val movementStatus: String = "Still",
     val temperatureValue: String = "0.0",
-    val emgValue: String = "0.00"
+    val emgValue: String = "0.00",
+    val movementHistory: List<Double> = emptyList()
 )
 
 @SuppressLint("MissingPermission")
@@ -41,6 +45,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val movementHistory = LinkedList<Double>()
     private var stillnessBaseline: Double? = null
     private val CALIBRATION_SIZE = 250
+    private val GRAPH_HISTORY_SIZE = 50 // Approx 2 seconds of data
+
+    private var timerJob: Job? = null
+    private var recordingStartTime: Long = 0
 
     init {
         if (bluetoothLeManager.hasPermissions()) {
@@ -74,8 +82,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     }
     
     private fun handleData(device: BluetoothDevice, characteristic: android.bluetooth.BluetoothGattCharacteristic, data: ByteArray) {
-        val hexString = data.joinToString(separator = " ") { "%02X".format(it) }
-        Log.d("DashboardViewModel", "Received data from ${device.address} - ${characteristic.uuid}: $hexString")
+        val timestamp = System.currentTimeMillis()
+        val deviceName = if (device.name.contains("Oralable", true)) "Oralable" else "ANR M40"
 
         when (characteristic.uuid) {
             BluetoothLeManager.SENSOR_DATA_CHAR_UUID -> {
@@ -83,12 +91,18 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 val ppgData = SensorDataParser.parsePpgData(data)
                 if (ppgData != null) {
                     _uiState.value = _uiState.value.copy(ppgValue = ppgData.ppgIr.toString())
+                    if (_uiState.value.isRecording) {
+                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, ppgIr = ppgData.ppgIr, ppgRed = ppgData.ppgRed, ppgGreen = ppgData.ppgGreen))
+                    }
                 }
             }
             BluetoothLeManager.ACCELEROMETER_CHAR_UUID -> {
                 if (!_uiState.value.oralableConnected) return
                 val accelerometerData = SensorDataParser.parseAccelerometerData(data)
                 if (accelerometerData != null) {
+                    if (_uiState.value.isRecording) {
+                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, accelX = accelerometerData.x, accelY = accelerometerData.y, accelZ = accelerometerData.z))
+                    }
                     val x = accelerometerData.x.toDouble()
                     val y = accelerometerData.y.toDouble()
                     val z = accelerometerData.z.toDouble()
@@ -100,6 +114,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.oralableConnected) return
                 val temperatureData = SensorDataParser.parseTemperatureData(data)
                 if (temperatureData != null) {
+                    if (_uiState.value.isRecording) {
+                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, temperature = temperatureData.celsius))
+                    }
                     _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
                 }
             }
@@ -107,6 +124,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.anrConnected) return
                 val emgData = SensorDataParser.parseEmgData(data)
                 if (emgData != null) {
+                    if (_uiState.value.isRecording) {
+                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, emgValue = emgData.value))
+                    }
                     _uiState.value = _uiState.value.copy(emgValue = String.format("%.2f", emgData.value))
                 }
             }
@@ -115,7 +135,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     
     private fun updateMovement(magnitude: Double) {
         movementHistory.add(magnitude)
-        if (movementHistory.size > CALIBRATION_SIZE) {
+        while (movementHistory.size > CALIBRATION_SIZE) {
             movementHistory.removeFirst()
         }
 
@@ -127,13 +147,48 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             if (magnitude > it * 1.5) "Active" else "Still"
         } ?: "Calibrating..."
 
+        val graphData = movementHistory.takeLast(GRAPH_HISTORY_SIZE)
+
         _uiState.value = _uiState.value.copy(
             movementValue = String.format("%.2f", magnitude),
-            movementStatus = status
+            movementStatus = status,
+            movementHistory = graphData
         )
     }
 
     fun toggleRecording() {
-        _uiState.value = _uiState.value.copy(isRecording = !_uiState.value.isRecording)
+        val isCurrentlyRecording = _uiState.value.isRecording
+        _uiState.value = _uiState.value.copy(isRecording = !isCurrentlyRecording)
+        if (!isCurrentlyRecording) {
+            SensorDataStore.startRecording()
+            startTimer()
+        } else {
+            SensorDataStore.stopRecording()
+            stopTimer()
+        }
+    }
+
+    private fun startTimer() {
+        recordingStartTime = System.currentTimeMillis()
+        timerJob = viewModelScope.launch {
+            while (true) {
+                val elapsedTime = System.currentTimeMillis() - recordingStartTime
+                _uiState.value = _uiState.value.copy(duration = formatDuration(elapsedTime))
+                delay(1000)
+            }
+        }
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        _uiState.value = _uiState.value.copy(duration = "00:00:00")
+    }
+
+    private fun formatDuration(millis: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
