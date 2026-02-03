@@ -55,6 +55,14 @@ fun DashboardScreen(
             data = uiState.ppgHistory
         )
         DataGraphCard(
+            title = "EMG",
+            value = uiState.emgValue,
+            unit = "mV",
+            icon = Icons.Default.Waves,
+            lineColor = Color.Cyan,
+            data = uiState.emgHistory
+        )
+        DataGraphCard(
             title = "Movement",
             value = uiState.movementValue,
             unit = "g",
@@ -69,14 +77,6 @@ fun DashboardScreen(
             unit = "°C",
             icon = Icons.Default.Thermostat,
             iconColor = Color.Red
-        )
-        DataGraphCard(
-            title = "EMG",
-            value = uiState.emgValue,
-            unit = "mV",
-            icon = Icons.Default.Waves,
-            lineColor = Color.Cyan,
-            data = uiState.emgHistory
         )
     }
 }
