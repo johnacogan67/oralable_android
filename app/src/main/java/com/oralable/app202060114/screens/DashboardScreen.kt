@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Waves
@@ -17,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.oralable.app202060114.composables.DataGraphCard
 import com.oralable.app202060114.composables.DeviceStatusIndicator
 import com.oralable.app202060114.composables.MetricCard
-import com.oralable.app202060114.composables.MovementGraphCard
 import com.oralable.app202060114.composables.RecordingButton
 import com.oralable.app202060114.viewmodels.DashboardViewModel
 
@@ -45,18 +46,21 @@ fun DashboardScreen(
             action = { viewModel.toggleRecording() },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        MetricCard(
-            title = "PPG Sensor",
+        DataGraphCard(
+            title = "",
             value = uiState.ppgValue,
-            unit = "Oralable IR",
+            unit = "",
             icon = Icons.Default.Timeline,
-            iconColor = Color.Magenta
+            lineColor = Color.Magenta,
+            data = uiState.ppgHistory
         )
-        MovementGraphCard(
+        DataGraphCard(
             title = "Movement",
             value = uiState.movementValue,
             unit = "g",
             subtitle = uiState.movementStatus,
+            icon = Icons.Default.OpenWith,
+            lineColor = Color.Blue,
             data = uiState.movementHistory
         )
         MetricCard(
@@ -66,12 +70,13 @@ fun DashboardScreen(
             icon = Icons.Default.Thermostat,
             iconColor = Color.Red
         )
-        MetricCard(
+        DataGraphCard(
             title = "EMG",
             value = uiState.emgValue,
             unit = "mV",
             icon = Icons.Default.Waves,
-            iconColor = Color.Cyan
+            lineColor = Color.Cyan,
+            data = uiState.emgHistory
         )
     }
 }

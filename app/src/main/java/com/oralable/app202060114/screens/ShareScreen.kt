@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,9 +42,24 @@ fun ShareScreen(
             result.data?.data?.let { uri ->
                 val csvString = viewModel.generateCsvString()
                 viewModel.writeCsvToFile(context.contentResolver, uri, csvString)
-                showToast(context, "CSV file saved successfully!")
+                if (uiState.errorMessage == null) {
+                    showToast(context, "CSV file saved successfully!")
+                }
             }
         }
+    }
+
+    if (uiState.errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.errorMessageShown() },
+            title = { Text("Error") },
+            text = { Text(uiState.errorMessage!!) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.errorMessageShown() }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 
     Column(

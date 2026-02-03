@@ -3,14 +3,17 @@ package com.oralable.app202060114.viewmodels
 import android.app.Application
 import android.content.ContentResolver
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.oralable.app202060114.data.SensorDataPoint
 import com.oralable.app202060114.data.SensorDataStore
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -18,18 +21,22 @@ import java.util.Locale
 import java.util.TimeZone
 
 data class ShareUiState(
-    val hasData: Boolean = false
+    val hasData: Boolean = false,
+    val errorMessage: String? = null
 )
 
 class ShareViewModel(application: Application) : AndroidViewModel(application) {
 
-    val uiState: StateFlow<ShareUiState> = SensorDataStore.recordedData
-        .map { ShareUiState(hasData = it.isNotEmpty()) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ShareUiState()
-        )
+    private val _uiState = MutableStateFlow(ShareUiState())
+    val uiState: StateFlow<ShareUiState> get() = _uiState.asStateFlow()
+
+    init {
+        SensorDataStore.recordedData
+            .onEach { data ->
+                _uiState.update { it.copy(hasData = data.isNotEmpty()) }
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun generateCsvString(): String {
         val data = SensorDataStore.getRecordedData()
@@ -59,7 +66,12 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         } catch (e: IOException) {
-            // Handle exception
+            Log.e("ShareViewModel", "Error writing CSV file", e)
+            _uiState.update { it.copy(errorMessage = "Failed to save CSV file.") }
         }
+    }
+
+    fun errorMessageShown() {
+        _uiState.update { it.copy(errorMessage = null) }
     }
 }

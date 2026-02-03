@@ -33,7 +33,9 @@ data class DashboardUiState(
     val movementStatus: String = "Still",
     val temperatureValue: String = "0.0",
     val emgValue: String = "0.00",
-    val movementHistory: List<Double> = emptyList()
+    val movementHistory: List<Double> = emptyList(),
+    val ppgHistory: List<Double> = emptyList(),
+    val emgHistory: List<Double> = emptyList()
 )
 
 @SuppressLint("MissingPermission")
@@ -43,9 +45,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     private val movementHistory = LinkedList<Double>()
+    private val ppgHistory = LinkedList<Double>()
+    private val emgHistory = LinkedList<Double>()
     private var stillnessBaseline: Double? = null
-    private val CALIBRATION_SIZE = 250
-    private val GRAPH_HISTORY_SIZE = 50 // Approx 2 seconds of data
+    private val CALIBRATION_SIZE = 50
+    private val GRAPH_HISTORY_SIZE = 50 
 
     private var timerJob: Job? = null
     private var recordingStartTime: Long = 0
@@ -90,7 +94,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.oralableConnected) return
                 val ppgData = SensorDataParser.parsePpgData(data)
                 if (ppgData != null) {
-                    _uiState.value = _uiState.value.copy(ppgValue = ppgData.ppgIr.toString())
+                    updatePpg(ppgData.ppgIr.toDouble())
                     if (_uiState.value.isRecording) {
                         SensorDataStore.add(SensorDataPoint(timestamp, deviceName, ppgIr = ppgData.ppgIr, ppgRed = ppgData.ppgRed, ppgGreen = ppgData.ppgGreen))
                     }
@@ -114,25 +118,47 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.oralableConnected) return
                 val temperatureData = SensorDataParser.parseTemperatureData(data)
                 if (temperatureData != null) {
+                    _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
                     if (_uiState.value.isRecording) {
                         SensorDataStore.add(SensorDataPoint(timestamp, deviceName, temperature = temperatureData.celsius))
                     }
-                    _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
                 }
             }
             BluetoothLeManager.EMG_CHAR_UUID -> {
                 if (!_uiState.value.anrConnected) return
                 val emgData = SensorDataParser.parseEmgData(data)
                 if (emgData != null) {
+                    updateEmg(emgData.value)
                     if (_uiState.value.isRecording) {
                         SensorDataStore.add(SensorDataPoint(timestamp, deviceName, emgValue = emgData.value))
                     }
-                    _uiState.value = _uiState.value.copy(emgValue = String.format("%.2f", emgData.value))
                 }
             }
         }
     }
     
+    private fun updatePpg(value: Double) {
+        ppgHistory.add(value)
+        while (ppgHistory.size > GRAPH_HISTORY_SIZE) {
+            ppgHistory.removeFirst()
+        }
+        _uiState.value = _uiState.value.copy(
+            ppgValue = String.format("%.0f", value),
+            ppgHistory = ppgHistory.toList()
+        )
+    }
+
+    private fun updateEmg(value: Double) {
+        emgHistory.add(value)
+        while (emgHistory.size > GRAPH_HISTORY_SIZE) {
+            emgHistory.removeFirst()
+        }
+        _uiState.value = _uiState.value.copy(
+            emgValue = String.format("%.2f", value),
+            emgHistory = emgHistory.toList()
+        )
+    }
+
     private fun updateMovement(magnitude: Double) {
         movementHistory.add(magnitude)
         while (movementHistory.size > CALIBRATION_SIZE) {
