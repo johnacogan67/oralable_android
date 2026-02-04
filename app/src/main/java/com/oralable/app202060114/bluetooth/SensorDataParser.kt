@@ -9,32 +9,32 @@ data class TemperatureData(val celsius: Float)
 data class EmgData(val value: Double)
 
 object SensorDataParser {
-    fun parsePpgData(data: ByteArray): PpgData? {
-        // PPG packet format:
-        // Bytes 0-3: Frame counter (uint32_t)
-        // Bytes 4+: 20 samples, each 12 bytes (3 × uint32_t PPG values)
-        val expectedSize = 4 + (20 * 12)
-        if (data.size < expectedSize) {
-            return null // Not a valid PPG packet
+    fun parsePpgData(data: ByteArray): List<PpgData>? {
+        if (data.size < 16) { // Minimum size for one sample + header
+            return null
         }
 
         val buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
         buffer.int // Skip frame counter
 
-        // For now, we'll just read the first sample to confirm data is flowing.
-        // In the Swift code, the order is Green, IR, Red. Let's assume that for now.
-        val ppgGreen = buffer.int
-        val ppgIr = buffer.int
-        val ppgRed = buffer.int
+        val samples = mutableListOf<PpgData>()
+        val bytesPerSample = 12
 
-        return PpgData(ppgIr, ppgRed, ppgGreen)
+        while (buffer.remaining() >= bytesPerSample) {
+            val ppgGreen = buffer.int
+            val ppgIr = buffer.int
+            val ppgRed = buffer.int
+            samples.add(PpgData(ppgIr, ppgRed, ppgGreen))
+        }
+
+        return if (samples.isEmpty()) null else samples
     }
 
     fun parseAccelerometerData(data: ByteArray): AccelerometerData? {
         // Accelerometer packet format:
         // Bytes 0-3: Frame counter (uint32_t)
         // Bytes 4+: 25 samples, each 6 bytes (3 × int16_t for X, Y, Z)
-        val expectedSize = 4 + (25 * 6)
+        val expectedSize = 4 + 6
         if (data.size < expectedSize) {
             return null
         }
@@ -69,7 +69,6 @@ object SensorDataParser {
         val buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
         val rawValue = buffer.short.toInt() and 0xFFFF // Read as unsigned short
         
-        // The Swift code normalizes the value by dividing by 1023.0
         val normalizedValue = rawValue / 1023.0
         return EmgData(normalizedValue)
     }

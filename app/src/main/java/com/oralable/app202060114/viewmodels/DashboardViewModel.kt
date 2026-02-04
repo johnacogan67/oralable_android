@@ -11,6 +11,7 @@ import com.oralable.app202060114.bluetooth.BluetoothLeManager
 import com.oralable.app202060114.bluetooth.SensorDataParser
 import com.oralable.app202060114.data.SensorDataPoint
 import com.oralable.app202060114.data.SensorDataStore
+import com.oralable.app202060114.processing.HeartRateCalculator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +36,9 @@ data class DashboardUiState(
     val emgValue: String = "0.00",
     val movementHistory: List<Double> = emptyList(),
     val ppgHistory: List<Double> = emptyList(),
-    val emgHistory: List<Double> = emptyList()
+    val emgHistory: List<Double> = emptyList(),
+    val heartRate: String = "Calibrating...",
+    val heartRateHistory: List<Double> = emptyList()
 )
 
 @SuppressLint("MissingPermission")
@@ -44,12 +47,17 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    private val heartRateCalculator = HeartRateCalculator()
     private val movementHistory = LinkedList<Double>()
     private val ppgHistory = LinkedList<Double>()
     private val emgHistory = LinkedList<Double>()
+    private val heartRateHistory = LinkedList<Double>()
     private var stillnessBaseline: Double? = null
     private val CALIBRATION_SIZE = 50
-    private val GRAPH_HISTORY_SIZE = 50 
+    private val GRAPH_HISTORY_SIZE = 50
+    
+    private val MIN_VALID_IR = 10000
+    private val MAX_VALID_IR = 5_000_000
 
     private var timerJob: Job? = null
     private var recordingStartTime: Long = 0
@@ -70,7 +78,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                         is BLEEvent.DeviceDisconnected -> {
                             if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
-                                _uiState.value = _uiState.value.copy(oralableConnected = false)
+                                _uiState.value = _uiState.value.copy(oralableConnected = false, heartRate = "Calibrating...")
                             } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
                                 _uiState.value = _uiState.value.copy(anrConnected = false)
                             }
@@ -92,11 +100,19 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         when (characteristic.uuid) {
             BluetoothLeManager.SENSOR_DATA_CHAR_UUID -> {
                 if (!_uiState.value.oralableConnected) return
-                val ppgData = SensorDataParser.parsePpgData(data)
-                if (ppgData != null) {
-                    updatePpg(ppgData.ppgIr.toDouble())
-                    if (_uiState.value.isRecording) {
-                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, ppgIr = ppgData.ppgIr, ppgRed = ppgData.ppgRed, ppgGreen = ppgData.ppgGreen))
+                val ppgSamples = SensorDataParser.parsePpgData(data)
+                if (ppgSamples != null) {
+                    ppgSamples.forEach { ppgData ->
+                        // Swift code validation
+                        if (ppgData.ppgIr < MIN_VALID_IR || ppgData.ppgIr > MAX_VALID_IR) {
+                            Log.d("HeartRate", "Skipping invalid sample: ${ppgData.ppgIr}")
+                            return@forEach
+                        }
+                        
+                        updatePpg(ppgData.ppgIr.toDouble())
+                        if (_uiState.value.isRecording) {
+                            SensorDataStore.add(SensorDataPoint(timestamp, deviceName, ppgIr = ppgData.ppgIr, ppgRed = ppgData.ppgRed, ppgGreen = ppgData.ppgGreen))
+                        }
                     }
                 }
             }
@@ -142,6 +158,20 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         while (ppgHistory.size > GRAPH_HISTORY_SIZE) {
             ppgHistory.removeFirst()
         }
+
+        val bpm = heartRateCalculator.process(value)
+        
+        if (bpm > 0) {
+            heartRateHistory.add(bpm.toDouble())
+            while (heartRateHistory.size > GRAPH_HISTORY_SIZE) {
+                heartRateHistory.removeFirst()
+            }
+            _uiState.value = _uiState.value.copy(
+                heartRate = bpm.toString(),
+                heartRateHistory = heartRateHistory.toList()
+            )
+        }
+        
         _uiState.value = _uiState.value.copy(
             ppgValue = String.format("%.0f", value),
             ppgHistory = ppgHistory.toList()

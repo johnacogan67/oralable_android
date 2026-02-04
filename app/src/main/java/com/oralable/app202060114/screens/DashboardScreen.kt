@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timeline
@@ -45,6 +46,14 @@ fun DashboardScreen(
             duration = uiState.duration,
             action = { viewModel.toggleRecording() },
             modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        DataGraphCard(
+            title = "Heart Rate",
+            value = uiState.heartRate,
+            unit = "BPM",
+            icon = Icons.Default.Favorite,
+            lineColor = Color.Red,
+            data = uiState.heartRateHistory
         )
         DataGraphCard(
             title = "",
