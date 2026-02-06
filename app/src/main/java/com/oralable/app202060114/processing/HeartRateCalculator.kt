@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 
 class HeartRateCalculator(
     private val sampleRate: Double = 50.0,
-    windowSeconds: Double = 5.0,
+    windowSeconds: Double = 20.0,
     private val minBPM: Double = 40.0,
     private val maxBPM: Double = 180.0,
     private val minPeaksRequired: Int = 4,
@@ -24,12 +24,20 @@ class HeartRateCalculator(
         }
 
         if (buffer.size < windowSize) {
-            return 0 // Not enough data
+            return 0 
+        }
+
+        if (buffer.size % (windowSize / 4) != 0) {
+            return 0
         }
 
         val filtered = applyBandpassFilter(buffer.toList())
         val peaks = findPeaks(filtered)
         Log.d("HeartRate", "Found ${peaks.size} peaks in window")
+        
+        if (peaks.size < minPeaksRequired) {
+            return 0
+        }
 
         val (bpm, _) = calculateBPM(peaks)
 
