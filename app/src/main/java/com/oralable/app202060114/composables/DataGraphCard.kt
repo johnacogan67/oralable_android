@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.ceil
 
 @Composable
 fun DataGraphCard(
@@ -28,6 +29,8 @@ fun DataGraphCard(
     data: List<Double>,
     icon: ImageVector,
     lineColor: Color,
+    minY: Float? = null,
+    maxY: Float? = null,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
@@ -91,13 +94,43 @@ fun DataGraphCard(
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
-            LineGraph(
-                data = data,
-                lineColor = lineColor,
-                modifier = Modifier
-                    .height(60.dp)
-                    .width(100.dp)
-            )
+            
+            Row(
+                modifier = Modifier.height(60.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (minY != null && maxY != null) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = maxY.toInt().toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = lineColor,
+                            fontSize = 10.sp
+                        )
+                        Text(
+                            text = minY.toInt().toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = lineColor,
+                            fontSize = 10.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
+                
+                LineGraph(
+                    data = data,
+                    lineColor = lineColor,
+                    minY = minY,
+                    maxY = maxY,
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(100.dp)
+                )
+            }
         }
     }
 }
@@ -106,24 +139,34 @@ fun DataGraphCard(
 private fun LineGraph(
     data: List<Double>,
     modifier: Modifier = Modifier,
-    lineColor: Color
+    lineColor: Color,
+    minY: Float? = null,
+    maxY: Float? = null
 ) {
     Canvas(modifier = modifier) {
         if (data.size < 2) return@Canvas
 
-        val maxVal = data.maxOrNull() ?: 1.0
-        val minVal = data.minOrNull() ?: 0.0
+        // Downsample if data is too large to improve performance
+        val displayData = if (data.size > 200) {
+            val step = ceil(data.size / 200.0).toInt()
+            data.filterIndexed { index, _ -> index % step == 0 }
+        } else {
+            data
+        }
+
+        val maxVal = maxY?.toDouble() ?: (data.maxOrNull() ?: 1.0)
+        val minVal = minY?.toDouble() ?: (data.minOrNull() ?: 0.0)
         val valueRange = if (maxVal - minVal > 0) maxVal - minVal else 1.0
 
         val path = Path()
         
         val firstX = 0f
-        val firstY = size.height - ((data.first() - minVal) / valueRange * size.height).toFloat()
+        val firstY = size.height - ((displayData.first() - minVal) / valueRange * size.height).toFloat()
         path.moveTo(firstX, firstY.coerceIn(0f, size.height))
 
-        data.forEachIndexed { index, value ->
+        displayData.forEachIndexed { index, value ->
             if (index > 0) {
-                val x = (index.toFloat() / (data.size - 1)) * size.width
+                val x = (index.toFloat() / (displayData.size - 1)) * size.width
                 val y = size.height - ((value - minVal) / valueRange * size.height).toFloat()
                 path.lineTo(x, y.coerceIn(0f, size.height))
             }

@@ -87,9 +87,13 @@ class BluetoothLeManager private constructor(private val context: Context) {
         val SENSOR_DATA_CHAR_UUID: UUID = UUID.fromString("3A0FF001-98C4-46B2-94AF-1AEE0FD4C48E")
         val ACCELEROMETER_CHAR_UUID: UUID = UUID.fromString("3A0FF002-98C4-46B2-94AF-1AEE0FD4C48E")
         val TEMPERATURE_CHAR_UUID: UUID = UUID.fromString("3A0FF003-98C4-46B2-94AF-1AEE0FD4C48E")
+        val BATTERY_CHAR_UUID: UUID = UUID.fromString("3A0FF004-98C4-46B2-94AF-1AEE0FD4C48E")
 
         val ANR_SERVICE_UUID: UUID = UUID.fromString("00001815-0000-1000-8000-00805f9b34fb")
         val EMG_CHAR_UUID: UUID = UUID.fromString("00002a58-0000-1000-8000-00805f9b34fb")
+
+        val BATTERY_SERVICE_UUID: UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb")
+        val BATTERY_LEVEL_CHAR_UUID: UUID = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb")
 
         val CLIENT_CHARACTERISTIC_CONFIG: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
@@ -222,7 +226,8 @@ class BluetoothLeManager private constructor(private val context: Context) {
             val characteristics = listOf(
                 tgmService.getCharacteristic(SENSOR_DATA_CHAR_UUID),
                 tgmService.getCharacteristic(ACCELEROMETER_CHAR_UUID),
-                tgmService.getCharacteristic(TEMPERATURE_CHAR_UUID)
+                tgmService.getCharacteristic(TEMPERATURE_CHAR_UUID),
+                tgmService.getCharacteristic(BATTERY_CHAR_UUID)
             )
             for (characteristic in characteristics) {
                 if (characteristic != null) {
@@ -240,6 +245,17 @@ class BluetoothLeManager private constructor(private val context: Context) {
             if (emgCharacteristic != null) {
                 gatt.setCharacteristicNotification(emgCharacteristic, true)
                 val descriptor = emgCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+                descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                queue.add(descriptor)
+            }
+        }
+
+        val batteryService = gatt.getService(BATTERY_SERVICE_UUID)
+        if (batteryService != null) {
+            val batteryLevelCharacteristic = batteryService.getCharacteristic(BATTERY_LEVEL_CHAR_UUID)
+            if (batteryLevelCharacteristic != null) {
+                gatt.setCharacteristicNotification(batteryLevelCharacteristic, true)
+                val descriptor = batteryLevelCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
                 descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                 queue.add(descriptor)
             }

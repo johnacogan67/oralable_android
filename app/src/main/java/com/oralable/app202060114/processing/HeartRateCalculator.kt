@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 
 class HeartRateCalculator(
     private val sampleRate: Double = 50.0,
-    windowSeconds: Double = 20.0,
+    windowSeconds: Double = 60.0,
     private val minBPM: Double = 40.0,
     private val maxBPM: Double = 180.0,
     private val minPeaksRequired: Int = 4,
@@ -16,6 +16,7 @@ class HeartRateCalculator(
     private val windowSize = (sampleRate * windowSeconds).toInt()
     private val buffer = LinkedList<Double>()
     private val minPeakInterval = (sampleRate * 60.0 / maxBPM * 0.8).toInt()
+    private var sampleCounter = 0
 
     fun process(sample: Double): Int {
         buffer.add(sample)
@@ -23,11 +24,14 @@ class HeartRateCalculator(
             buffer.removeFirst()
         }
 
+        sampleCounter++
+
         if (buffer.size < windowSize) {
             return 0 
         }
 
-        if (buffer.size % (windowSize / 4) != 0) {
+        // Only calculate once every second (50 samples at 50Hz)
+        if (sampleCounter % 50 != 0) {
             return 0
         }
 
@@ -39,9 +43,15 @@ class HeartRateCalculator(
             return 0
         }
 
-        val (bpm, _) = calculateBPM(peaks)
+        val intervals = (1 until peaks.size).map { (peaks[it] - peaks[it - 1]).toDouble() }
+        if (intervals.isEmpty()) {
+            return 0
+        }
 
-        return if (bpm in minBPM.toInt()..maxBPM.toInt()) bpm else 0
+        val avgInterval = intervals.average()
+        val bpm = 60.0 / (avgInterval / sampleRate)
+
+        return if (bpm.toInt() in minBPM.toInt()..maxBPM.toInt()) bpm.toInt() else 0
     }
 
     private fun applyBandpassFilter(data: List<Double>): List<Double> {
@@ -60,10 +70,19 @@ class HeartRateCalculator(
         val peaks = mutableListOf<Int>()
         if (data.size < 3) return peaks
 
-        val maxValue = data.maxOrNull() ?: 0.0
-        val minValue = data.minOrNull() ?: 0.0
-        val amplitude = maxValue - minValue
-        val threshold = minValue + amplitude * peakThreshold
+        // Robust Thresholding:
+        // Instead of using the absolute max (which catches artifacts),
+        // we sort the data and take the 95th percentile as our "max" reference.
+        val sortedData = data.sorted()
+        val index95 = (sortedData.size * 0.95).toInt()
+        val index05 = (sortedData.size * 0.05).toInt()
+        
+        // Use these percentiles to define the signal range
+        val robustMax = sortedData.getOrElse(index95) { data.maxOrNull() ?: 0.0 }
+        val robustMin = sortedData.getOrElse(index05) { data.minOrNull() ?: 0.0 }
+        
+        val amplitude = robustMax - robustMin
+        val threshold = robustMin + amplitude * peakThreshold
 
         for (i in 1 until data.size - 1) {
             if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
@@ -73,25 +92,5 @@ class HeartRateCalculator(
             }
         }
         return peaks
-    }
-
-    private fun calculateBPM(peaks: List<Int>): Pair<Int, Double> {
-        if (peaks.size < minPeaksRequired) {
-            return Pair(0, 0.0)
-        }
-
-        val intervals = (1 until peaks.size).map { (peaks[it] - peaks[it - 1]).toDouble() }
-        if (intervals.isEmpty()) {
-            return Pair(0, 0.0)
-        }
-
-        val avgInterval = intervals.average()
-        val bpm = 60.0 / (avgInterval / sampleRate)
-
-        val variance = intervals.map { (it - avgInterval).pow(2) }.average()
-        val stdDev = sqrt(variance)
-        val confidence = (1.0 - (stdDev / avgInterval)).coerceIn(0.0, 1.0)
-
-        return Pair(bpm.toInt(), confidence)
     }
 }

@@ -72,4 +72,24 @@ object SensorDataParser {
         val normalizedValue = rawValue / 1023.0
         return EmgData(normalizedValue)
     }
+
+    fun parseTgmBatteryData(data: ByteArray): Int? {
+        if (data.size < 4) {
+            return null
+        }
+        val buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
+        val millivolts = buffer.int
+        
+        // Convert millivolts to percentage (approximate LiPo curve)
+        // 4.2V (4200mV) = 100%, 3.3V (3300mV) = 0%
+        val percentage = ((millivolts - 3300) / 900.0) * 100.0
+        return percentage.toInt().coerceIn(0, 100)
+    }
+
+    fun parseStandardBatteryLevel(data: ByteArray): Int? {
+        if (data.isEmpty()) {
+            return null
+        }
+        return data[0].toInt().coerceIn(0, 100)
+    }
 }

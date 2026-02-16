@@ -10,5 +10,7 @@ data class SensorDataPoint(
     val accelY: Short? = null,
     val accelZ: Short? = null,
     val temperature: Float? = null,
-    val emgValue: Double? = null
+    val emgValue: Double? = null,
+    val battery: Int? = null,
+    val heartRate: Int? = null
 )

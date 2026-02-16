@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.oralable.app202060114.bluetooth.BLEEvent
 import com.oralable.app202060114.bluetooth.BluetoothLeManager
 import com.oralable.app202060114.bluetooth.SensorDataParser
+import com.oralable.app202060114.data.DataAggregator
 import com.oralable.app202060114.data.SensorDataPoint
 import com.oralable.app202060114.data.SensorDataStore
 import com.oralable.app202060114.processing.HeartRateCalculator
@@ -47,6 +48,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    private val dataAggregator = DataAggregator()
     private val heartRateCalculator = HeartRateCalculator()
     private val movementHistory = LinkedList<Double>()
     private val ppgHistory = LinkedList<Double>()
@@ -54,42 +56,46 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val heartRateHistory = LinkedList<Double>()
     private var stillnessBaseline: Double? = null
     private val CALIBRATION_SIZE = 50
-    private val GRAPH_HISTORY_SIZE = 50
+    
+    // 60 seconds at 50Hz = 3000 samples
+    private val GRAPH_HISTORY_SIZE = 3000
     
     private val MIN_VALID_IR = 10000
     private val MAX_VALID_IR = 5_000_000
 
     private var timerJob: Job? = null
     private var recordingStartTime: Long = 0
+    private var ppgLogCounter = 0
 
     init {
+        // Always subscribe to events
+        bluetoothLeManager.eventFlow
+            .onEach { event ->
+                when (event) {
+                    is BLEEvent.DeviceConnected -> {
+                        if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
+                            _uiState.value = _uiState.value.copy(oralableConnected = true)
+                        } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
+                            _uiState.value = _uiState.value.copy(anrConnected = true)
+                        }
+                    }
+                    is BLEEvent.DeviceDisconnected -> {
+                        if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
+                            _uiState.value = _uiState.value.copy(oralableConnected = false, heartRate = "Calibrating...")
+                        } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
+                            _uiState.value = _uiState.value.copy(anrConnected = false)
+                        }
+                    }
+                    is BLEEvent.DataReceived -> {
+                        handleData(event.device, event.characteristic, event.value)
+                    }
+                    else -> {}
+                }
+            }
+            .launchIn(viewModelScope)
+
         if (bluetoothLeManager.hasPermissions()) {
             bluetoothLeManager.reconnectToSavedDevices()
-
-            bluetoothLeManager.eventFlow
-                .onEach { event ->
-                    when (event) {
-                        is BLEEvent.DeviceConnected -> {
-                            if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
-                                _uiState.value = _uiState.value.copy(oralableConnected = true)
-                            } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
-                                _uiState.value = _uiState.value.copy(anrConnected = true)
-                            }
-                        }
-                        is BLEEvent.DeviceDisconnected -> {
-                            if (event.device.name?.contains("Oralable", ignoreCase = true) == true) {
-                                _uiState.value = _uiState.value.copy(oralableConnected = false, heartRate = "Calibrating...")
-                            } else if (event.device.name?.contains("ANR", ignoreCase = true) == true) {
-                                _uiState.value = _uiState.value.copy(anrConnected = false)
-                            }
-                        }
-                        is BLEEvent.DataReceived -> {
-                            handleData(event.device, event.characteristic, event.value)
-                        }
-                        else -> {}
-                    }
-                }
-                .launchIn(viewModelScope)
         }
     }
     
@@ -103,15 +109,25 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 val ppgSamples = SensorDataParser.parsePpgData(data)
                 if (ppgSamples != null) {
                     ppgSamples.forEach { ppgData ->
-                        // Swift code validation
+                        ppgLogCounter++
+                        if (ppgLogCounter % 50 == 0) {
+                            Log.d("DeviceManagerAdapter", "PPG IR: ${ppgData.ppgIr}")
+                            Log.d("DeviceManagerAdapter", "PPG Red: ${ppgData.ppgRed}")
+                            Log.d("DeviceManagerAdapter", "PPG Green: ${ppgData.ppgGreen}")
+                        }
+
                         if (ppgData.ppgIr < MIN_VALID_IR || ppgData.ppgIr > MAX_VALID_IR) {
-                            Log.d("HeartRate", "Skipping invalid sample: ${ppgData.ppgIr}")
+                            if (ppgLogCounter % 50 == 0) {
+                                Log.d("HeartRate", "Skipping invalid sample: ${ppgData.ppgIr}")
+                            }
                             return@forEach
                         }
                         
+                        dataAggregator.updatePpg(ppgData)
                         updatePpg(ppgData.ppgIr.toDouble())
+
                         if (_uiState.value.isRecording) {
-                            SensorDataStore.add(SensorDataPoint(timestamp, deviceName, ppgIr = ppgData.ppgIr, ppgRed = ppgData.ppgRed, ppgGreen = ppgData.ppgGreen))
+                            SensorDataStore.add(dataAggregator.createDataPoint(timestamp, deviceName))
                         }
                     }
                 }
@@ -120,9 +136,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.oralableConnected) return
                 val accelerometerData = SensorDataParser.parseAccelerometerData(data)
                 if (accelerometerData != null) {
-                    if (_uiState.value.isRecording) {
-                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, accelX = accelerometerData.x, accelY = accelerometerData.y, accelZ = accelerometerData.z))
-                    }
+                    // Log.d("DeviceManagerAdapter", "Accel X: ${accelerometerData.x}")
+                    // Log.d("DeviceManagerAdapter", "Accel Y: ${accelerometerData.y}")
+                    // Log.d("DeviceManagerAdapter", "Accel Z: ${accelerometerData.z}")
+                    
+                    dataAggregator.updateAccel(accelerometerData.x, accelerometerData.y, accelerometerData.z)
                     val x = accelerometerData.x.toDouble()
                     val y = accelerometerData.y.toDouble()
                     val z = accelerometerData.z.toDouble()
@@ -134,20 +152,31 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 if (!_uiState.value.oralableConnected) return
                 val temperatureData = SensorDataParser.parseTemperatureData(data)
                 if (temperatureData != null) {
+                    // Log.d("DeviceManagerAdapter", "Temperature: ${temperatureData.celsius}")
+                    dataAggregator.updateTemp(temperatureData.celsius)
                     _uiState.value = _uiState.value.copy(temperatureValue = String.format("%.1f", temperatureData.celsius))
-                    if (_uiState.value.isRecording) {
-                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, temperature = temperatureData.celsius))
-                    }
                 }
             }
             BluetoothLeManager.EMG_CHAR_UUID -> {
                 if (!_uiState.value.anrConnected) return
                 val emgData = SensorDataParser.parseEmgData(data)
                 if (emgData != null) {
+                    dataAggregator.updateEmg(emgData.value)
                     updateEmg(emgData.value)
-                    if (_uiState.value.isRecording) {
-                        SensorDataStore.add(SensorDataPoint(timestamp, deviceName, emgValue = emgData.value))
-                    }
+                }
+            }
+            BluetoothLeManager.BATTERY_CHAR_UUID -> {
+                val battery = SensorDataParser.parseTgmBatteryData(data)
+                if (battery != null) {
+                    // Log.d("DeviceManagerAdapter", "Oralable Battery: $battery%")
+                    dataAggregator.updateBattery(battery)
+                }
+            }
+            BluetoothLeManager.BATTERY_LEVEL_CHAR_UUID -> {
+                val battery = SensorDataParser.parseStandardBatteryLevel(data)
+                if (battery != null) {
+                    // Log.d("DeviceManagerAdapter", "Battery Level: $battery%")
+                    dataAggregator.updateBattery(battery)
                 }
             }
         }
@@ -170,6 +199,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 heartRate = bpm.toString(),
                 heartRateHistory = heartRateHistory.toList()
             )
+            dataAggregator.updateHeartRate(bpm)
         }
         
         _uiState.value = _uiState.value.copy(
@@ -203,12 +233,15 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             if (magnitude > it * 1.5) "Active" else "Still"
         } ?: "Calibrating..."
 
-        val graphData = movementHistory.takeLast(GRAPH_HISTORY_SIZE)
+        // We use the same history size for graphs
+        while (movementHistory.size > GRAPH_HISTORY_SIZE) {
+            movementHistory.removeFirst()
+        }
 
         _uiState.value = _uiState.value.copy(
             movementValue = String.format("%.2f", magnitude),
             movementStatus = status,
-            movementHistory = graphData
+            movementHistory = movementHistory.toList()
         )
     }
 

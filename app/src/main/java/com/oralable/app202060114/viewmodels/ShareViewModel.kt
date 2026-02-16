@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.oralable.app202060114.data.SensorDataPoint
 import com.oralable.app202060114.data.SensorDataStore
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -44,7 +45,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             return ""
         }
 
-        val header = "Timestamp,Device_Type,EMG,PPG_IR,PPG_Red,PPG_Green,Accel_X,Accel_Y,Accel_Z,Temperature"
+        val header = "Timestamp,Device_Type,EMG,PPG_IR,PPG_Red,PPG_Green,Accel_X,Accel_Y,Accel_Z,Temperature,Battery,Heart_Rate"
         val rows = data.map { it.toCsvRow() }
 
         return (listOf(header) + rows).joinToString("\n")
@@ -55,7 +56,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             timeZone = TimeZone.getTimeZone("UTC")
         }
         val formattedDate = sdf.format(Date(timestamp))
-        return "$formattedDate,$deviceName,${emgValue ?: ""},${ppgIr ?: ""},${ppgRed ?: ""},${ppgGreen ?: ""},${accelX ?: ""},${accelY ?: ""},${accelZ ?: ""},${temperature ?: ""}"
+        return "$formattedDate,$deviceName,${emgValue ?: ""},${ppgIr ?: ""},${ppgRed ?: ""},${ppgGreen ?: ""},${accelX ?: ""},${accelY ?: ""},${accelZ ?: ""},${temperature ?: ""},${battery ?: ""},${heartRate ?: ""}"
     }
 
     fun writeCsvToFile(contentResolver: ContentResolver, uri: Uri, csvString: String) {

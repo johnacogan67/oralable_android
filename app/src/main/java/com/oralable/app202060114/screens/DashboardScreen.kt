@@ -53,7 +53,9 @@ fun DashboardScreen(
             unit = "BPM",
             icon = Icons.Default.Favorite,
             lineColor = Color.Red,
-            data = uiState.heartRateHistory
+            data = uiState.heartRateHistory,
+            minY = 20f,
+            maxY = 200f
         )
         DataGraphCard(
             title = "",
